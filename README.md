@@ -9,7 +9,7 @@ Ryx is a modern, statically typed programming language designed to deliver the s
 Ryx functions as a high-level frontend that transpiles to C, offering a unique dual-pipeline approach to handle both development iteration and production optimization.
 
 ### The Transpilation Workflow
-Ryx generates C11 standard code from your source, ensuring memory safety and type correctness before handing off to native backend compilers. This architecture allows Ryx to remain lightweight while leveraging decades of compiler optimizations.
+Ryx generates C11-23 standard code from your source, ensuring memory safety and type correctness before handing off to native backend compilers. This architecture allows Ryx to remain lightweight while leveraging decades of compiler optimizations.
 
 ### Build Modes
 Ryx distinguishes between development speed and execution speed by utilizing different backend compilers:
