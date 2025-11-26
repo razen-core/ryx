@@ -37,4 +37,4 @@ You may obtain a copy of the License at:
 The "Ryx" name, the Ryx logo, and all related branding assets are exclusively owned by the Razen Core Team and Prathmesh Barot. They are **not** covered by the Apache License 2.0. You may not use these trademarks to endorse or promote products derived from this software without specific prior written permission.
 
 **Custom Usage Notice:**
-Unless required by applicable law or agreed to in writing, software distributed under this License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the [LICENSE](LICENSE) file for the specific language governing permissions and limitations under the License.
+Unless required by applicable law or agreed to in writing, software distributed under this License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the [LICENSE](LICENSE) file for the specific language governing permissions and limitations under the License. 
