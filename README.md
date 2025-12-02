@@ -15,6 +15,7 @@
   <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="License">
   <img src="https://img.shields.io/badge/platform-Linux%20%7C%20Windows%20%7C%20macOS-lightgrey" alt="Platform">
   <img src="https://img.shields.io/badge/status-Active%20Development-success" alt="Status">
+  <a href="https://aratt.ai/@ryx"><img src="https://img.shields.io/badge/Arattai-Join%20Channel-25D366?style=flat&logo=arattai&logoColor=white" alt="Join Arattai Channel"></a>
 </p>
 
 <p align="center">
@@ -46,6 +47,12 @@ Ryx distinguishes between development speed and execution speed by automatically
     <td>Targets <b>GCC / Clang</b> for maximum optimization. Produces highly efficient, standalone binaries suitable for deployment.</td>
   </tr>
 </table>
+
+## Community
+
+Stay updated with the latest development news, feature polls, and announcements.
+
+- **Official Channel:** [Join us on Arattai](https://aratt.ai/@ryx)
 
 ## Roadmap
 
