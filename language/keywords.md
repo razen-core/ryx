@@ -69,7 +69,10 @@ This document lists all reserved keywords in the Ryx programming language.
 - `nil` – Null or empty value.
 - `true` – Boolean true literal.
 - `false` – Boolean false literal.
-- `inf` – Infinity literal (e.g., `const max = inf` for ML optimizers).  
+- `inf`     – Positive infinity literal (e.g., for ML optimizers).
+- `neg_inf` – Negative infinity literal (useful for loss bounds).
+- `pi`      – Mathematical constant π (≈ 3.14159).
+- `e`       – Mathematical constant e (≈ 2.71828). 
   *Tech tip:* Handles big-number edges in crypto—pair with unions for robust floats.
 
 ## 7. Built-in Types (Reserved Keywords)
@@ -87,6 +90,5 @@ These are the core data types you can use directly in Ryx. No imports needed.
 - `autodiff`  – Marks a block or function for automatic differentiation
 - `nan`       – Not-a-Number special float value
 - `void`      – No return value (used in function signatures)
-- `any`       – Dynamic type (use only when needed)
 
 *Tip:* `tensor` and `grad` make Ryx super powerful for AI without adding extra complexity.  
