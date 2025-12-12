@@ -71,3 +71,22 @@ This document lists all reserved keywords in the Ryx programming language.
 - `false` – Boolean false literal.
 - `inf` – Infinity literal (e.g., `const max = inf` for ML optimizers).  
   *Tech tip:* Handles big-number edges in crypto—pair with unions for robust floats.
+
+## 7. Built-in Types (Reserved Keywords)
+
+These are the core data types you can use directly in Ryx. No imports needed.
+
+- `bool`      – True or false values
+- `int`       – Signed integer (64-bit by default)
+- `uint`      – Unsigned integer
+- `float`     – 64-bit floating-point number (double precision)
+- `string`    – UTF-8 text
+- `bytes`     – Raw byte array
+- `tensor`    – Multi-dimensional array optimized for AI/ML (with GPU support)
+- `grad`      – Marks a tensor for automatic gradient tracking (used with autodiff)
+- `autodiff`  – Marks a block or function for automatic differentiation
+- `nan`       – Not-a-Number special float value
+- `void`      – No return value (used in function signatures)
+- `any`       – Dynamic type (use only when needed)
+
+*Tip:* `tensor` and `grad` make Ryx super powerful for AI without adding extra complexity.  
