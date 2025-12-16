@@ -83,7 +83,7 @@ These are the core data types you can use directly in Ryx. No imports needed.
 - `int`       – Signed integer (64-bit by default)
 - `uint`      – Unsigned integer
 - `float`     – 64-bit floating-point number (double precision)
-- `string`    – UTF-8 text
+- `str`    – UTF-8 text
 - `bytes`     – Raw byte array
 - `tensor`    – Multi-dimensional array optimized for AI/ML (with GPU support)
 - `grad`      – Marks a tensor for automatic gradient tracking (used with autodiff)
