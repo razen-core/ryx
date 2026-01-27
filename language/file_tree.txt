@@ -1,0 +1,61 @@
+docs/
+├── 00_vision/
+│   ├── vision.md
+│   ├── principles.md
+│   └── roadmap.md
+│
+├── 01_language/
+│   ├── overview.md
+│   ├── syntax.md
+│   ├── keywords.md
+│   ├── symbols_operators.md
+│   ├── types.md
+│   ├── control_flow.md
+│   ├── functions.md
+│   ├── modules.md
+│   └── errors.md
+│
+├── 02_memory_model/
+│   ├── daso.md
+│   ├── ownership.md
+│   ├── sharing.md
+│   ├── regions.md
+│   ├── concurrency.md
+│   └── unsafe.md
+│
+├── 03_compiler_rules/
+│   ├── safety_guarantees.md
+│   ├── escape_analysis.md
+│   ├── promotion_rules.md
+│   ├── borrow_inference.md
+│   └── error_model.md
+│
+├── 04_modules_std/
+│   ├── module_system.md
+│   ├── std_overview.md
+│   └── import_rules.md
+│
+├── 05_concurrency_ai/
+│   ├── async_await.md
+│   ├── fork_model.md
+│   ├── autodiff.md
+│   └── tensor_model.md
+│
+├── 06_backend/
+│   ├── compilation_pipeline.md
+│   ├── ir_spec.md
+│   ├── c_codegen.md
+│   ├── abi.md
+│   └── runtime.md
+│
+├── 07_tooling/
+│   ├── cli.md
+│   ├── diagnostics.md
+│   ├── formatter.md
+│   └── lsp.md
+│
+└── 99_appendix/
+    ├── glossary.md
+    ├── comparisons.md
+    ├── design_history.md
+    └── faq.md
