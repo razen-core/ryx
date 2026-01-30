@@ -1,6 +1,6 @@
 <p align="center">
   <!-- Replace with your actual logo path -->
-  <img src="ryx_logo_trans.webp" alt="Ryx Logo" width="140">
+  <img src="/assets/logos/ryx_logo_blue_bg.png" alt="Ryx Logo" width="140">
 </p>
 
 <h1 align="center">Ryx Programming Language</h1>
