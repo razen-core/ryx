@@ -1,8 +1,8 @@
-# Ryx Language Specification: Keywords 
+# Ryx Language Specification: Keywords
 
 This document serves as the official reference for the Ryx programming language.  
 **Philosophy:** Ryx combines the simplicity of Go, the safety of Rust, and the power of Python for AI/ML.  
-**Total Keywords:** ~28 (Lightweight & Modern).
+**Total Keywords:** ~25 (Lightweight & Modern).
 
 ---
 
@@ -11,8 +11,8 @@ This document serves as the official reference for the Ryx programming language.
 
 - `mut`   – Declare a mutable variable. (Variables are immutable by default).
 - `const` – Declare a compile-time constant value.
-- `flow`  – Declare a reactive variable.  
-  *Feature:* Automatically updates UI or logic when the underlying data stream changes (e.g., live crypto prices).
+- `shared` – Declare a reference-counted shared value (opt-in for shared ownership).  
+  *Usage:* `shared cache := Map[str, Data]()`
 
 ---
 
@@ -21,7 +21,6 @@ This document serves as the official reference for the Ryx programming language.
 
 - `struct` – Define a custom data structure with named fields.
 - `enum`   – Define a set of named variants or a tagged union.
-- `union`  – Define a high-performance untagged union (e.g., `union Num = int || float`).
 - `trait`  – Define a shared behavior or interface.
 - `impl`   – Implement a trait or method for a specific type.
 - `alias`  – Create a shortcut name for a complex type.  
@@ -32,7 +31,7 @@ This document serves as the official reference for the Ryx programming language.
 ## 3. Functions & Modules
 *Building blocks of logic and organization.*
 
-- `act`  – Define a function or action.  
+- `act`  – Define a function or action. Creates a scoped memory region (DASO).  
   *Note:* Uses "expression body" syntax (`->`) for one-liners.
 - `retn` – Return a value from an action.
 - `use`  – Import modules or specific items.
@@ -48,52 +47,58 @@ This document serves as the official reference for the Ryx programming language.
 - `loop`  – Universal loop construct (replaces `for`/`while`).
 - `break` – Exit a loop immediately.
 - `next`  – Skip to the next iteration of a loop.
-- `match` – Powerful pattern matching (supports unions and enums).
+- `match` – Powerful pattern matching (supports enums and Result/Option types).
 - `guard` – Early exit condition.  
-  *Usage:* `guard user.isValid else { retn Error }` — Keeps code flat.
+  *Usage:* `guard user.isValid else { retn Error }` — Keeps code flat and readable.
 
 ---
 
-## 5. Modern Error Handling (New)
-*Robust, flat, and readable error management.*
+## 5. Error Handling & Resource Management
+*Robust, explicit error management.*
 
-- `try`   – Attempt an action; automatically propagates errors up the stack if they occur.
-- `catch` – Provide a fallback value if an expression fails.  
-  *Example:* `result := try fetch() catch "Default"`
-- `defer` – Schedule code to run when the current scope ends (replaces `finally`).  
+- `defer` – Schedule code to run when the current scope ends (guaranteed cleanup).  
   *Usage:* `defer file.close()`
+- **Note:** Error handling uses `Result<T, E>` and `Option<T>` types (see Standard Library).  
+  *Propagation:* Use `?` operator to propagate errors automatically.
 
 ---
 
-## 6. Concurrency & AI
-*Native support for parallel tasks and machine learning.*
+## 6. Concurrency
+*Native support for asynchronous operations.*
 
 - `async` – Define an asynchronous action.
 - `await` – Pause execution until an async task completes.
-- `fork`  – Spawn a parallel task. Ryx optimizes and merges similar forks.
-- `grad`  – Mark a tensor for automatic gradient tracking (AutoDiff).
-- `autodiff` – Define a block where automatic differentiation is active.
 
 ---
 
-## 7. Operators & Special Values
+## 7. Memory Safety
+*Low-level control when needed.*
+
+- `unsafe` – Mark a block where safety guarantees are disabled.  
+  *Usage:* For raw pointers, manual allocation, FFI.  
+  *Example:* `unsafe { ptr := alloc(1024) }`
+
+---
+
+## 8. Operators & Special Values
 *Built-in logic and literals.*
 
 - `in`    – Check membership (`x in list`) or iteration (`loop i in range`).
 - `as`    – Safe type casting.
 - `is`    – Type checking (`if x is int`).
 - `self`  – Reference to the current instance in methods.
-- `nil`   – Represents the absence of a value.
-- `true`  – Boolean true.
-- `false` – Boolean false.
-- `inf`   – Positive infinity (Optimization/ML).
-- `neg_inf` – Negative infinity.
-- `pi`    – Constant: 3.14159...
-- `e`     – Constant: 2.71828...
 
 ---
 
-## 8. Primitive Types (Built-in)
+## 9. Boolean Literals
+*Logical values.*
+
+- `true`  – Boolean true.
+- `false` – Boolean false.
+
+---
+
+## 10. Primitive Types (Built-in)
 *No imports required. Optimized for 64-bit systems.*
 
 - `bool`   – Logical value (true/false).
@@ -103,5 +108,54 @@ This document serves as the official reference for the Ryx programming language.
 - `str`    – UTF-8 string.
 - `bytes`  – Raw byte array (Buffer).
 - `void`   – Indicates no return value.
-- `tensor` – N-dimensional array with GPU acceleration support.
-- `nan`    – Not-a-Number (Float error state).
+- `tensor` – N-dimensional array with GPU acceleration support (AI/ML).
+
+---
+
+## 11. Standard Library Types
+*Available in prelude (auto-imported).*
+
+These are **not keywords** but are always available:
+
+- `Option<T>` – Enum with variants `Some(T)` or `None` (represents optional values).
+- `Result<T, E>` – Enum with variants `Ok(T)` or `Err(E)` (represents operations that can fail).
+
+*Example:*
+```ryx
+age := input().parse_int()  // Returns Result<int, ParseError>
+user := users.get(id)       // Returns Option<User>
+```
+
+---
+
+## 12. Standard Library Constants
+*Available in `std.math` (import when needed).*
+
+- `PI`     – 3.14159... (π)
+- `E`      – 2.71828... (Euler's number)
+- `INF`    – Positive infinity
+- `NEG_INF` – Negative infinity
+- `NAN`    – Not-a-Number
+
+*Usage:*
+```ryx
+use std.math
+
+area := math.PI * r * r
+growth := math.E ** x
+```
+
+---
+
+## Summary
+
+**Core Philosophy:**
+- Immutable by default (`mut` for mutability)
+- Explicit over implicit (`shared` for reference counting)
+- Memory safety without garbage collection (DASO)
+- Clean syntax (no parentheses in `if`, trailing commas allowed)
+- Modern error handling (Result/Option instead of exceptions)
+
+**Next Steps:**
+- See `Symbols.md` for operators and syntax
+- See `DASO.md` for memory management details
