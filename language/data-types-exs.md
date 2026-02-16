@@ -1,4 +1,4 @@
-# ALL RYX DATA TYPES - Complete Examples
+# ALL RYX DATA TYPES - Complete Examples (Spine Case)
 
 ---
 
@@ -6,8 +6,8 @@
 
 ```ryx
 // bool
-isActive := true
-hasError := false
+is_Active := true
+has_Error := false
 
 // int (64-bit signed)
 count    := 42
@@ -53,10 +53,10 @@ grid     := [[1, 2, 3],
 // Array operations
 arr := [10, 20, 30, 40, 50]
 
-first    := arr[0]              // 10
-last     := arr[arr.len() - 1]  // 50
-slice    := arr[1..4]           // [20, 30, 40]
-sliceInc := arr[1..=4]          // [20, 30, 40, 50]
+first     := arr[0]              // 10
+last      := arr[arr.len() - 1]  // 50
+slice     := arr[1..4]           // [20, 30, 40]
+slice_Inc := arr[1..=4]          // [20, 30, 40, 50]
 
 // Iteration
 loop item in arr {
@@ -73,8 +73,8 @@ loop (index, value) in arr.enumerate() {
 ## 3. VECTORS - Dynamic Size
 
 ```ryx
-// Vec[T] - growable array
-mut nums := Vec[int]()
+// vec[T] - growable array
+mut nums := vec[int]()
 
 // Add elements
 nums.push(10)
@@ -82,33 +82,33 @@ nums.push(20)
 nums.push(30)
 
 // Initialize with values
-values := Vec[1, 2, 3, 4, 5]
+values := vec[1, 2, 3, 4, 5]
 
-// Vec operations
-nums.pop()              // Remove last → Some(30)
+// vec operations
+nums.pop()              // Remove last → some(30)
 nums.insert(1, 15)      // Insert at index
 nums.remove(0)          // Remove at index
 nums.clear()            // Remove all
 
-length := nums.len()
-isEmpty := nums.isEmpty()
+length   := nums.len()
+is_Empty := nums.is_Empty()
 
 // Access
 first := nums[0]
 last  := nums[nums.len() - 1]
 
 // With capacity
-mut buffer := Vec[int].withCapacity(100)
+mut buffer := vec[int].with_Capacity(100)
 
 // Vector of structs
-mut users := Vec[User]()
-users.push(User { id 1, name "Alice" })
-users.push(User { id 2, name "Bob" })
+mut users := vec[user]()
+users.push(user { id 1, name "Alice" })
+users.push(user { id 2, name "Bob" })
 
 // Nested vectors
-mut matrix := Vec[Vec[int]]()
-matrix.push(Vec[1, 2, 3])
-matrix.push(Vec[4, 5, 6])
+mut matrix := vec[vec[int]]()
+matrix.push(vec[1, 2, 3])
+matrix.push(vec[4, 5, 6])
 ```
 
 ---
@@ -116,8 +116,8 @@ matrix.push(Vec[4, 5, 6])
 ## 4. MAPS - Key-Value Storage
 
 ```ryx
-// Map[K, V]
-mut scores := Map[str, int]()
+// map[K, V]
+mut scores := map[str, int]()
 
 // Insert
 scores.insert("Alice", 95)
@@ -125,15 +125,15 @@ scores.insert("Bob", 87)
 scores.insert("Charlie", 92)
 
 // Initialize with values
-ages := Map {
+ages := map {
     "Alice"   25,
     "Bob"     30,
     "Charlie" 28,
 }
 
 // Access
-aliceScore := scores.get("Alice")  // Option[int] → Some(95)
-unknown    := scores.get("Dave")   // None
+alice_Score := scores.get("Alice")  // option[int] → some(95)
+unknown     := scores.get("Dave")   // none
 
 // Get with default
 score := scores.get("Alice").unwrap_or(0)
@@ -145,7 +145,7 @@ scores.insert("Alice", 98)  // Replaces 95
 scores.remove("Bob")  // Removes Bob
 
 // Check existence
-hasAlice := scores.contains("Alice")
+has_Alice := scores.contains("Alice")
 
 // Iteration
 loop (key, value) in scores {
@@ -167,11 +167,11 @@ size := scores.len()
 scores.clear()
 
 // Complex maps
-mut cache := Map[str, User]()
-cache.insert("user_1", User { id 1, name "Alice" })
+mut cache := map[str, user]()
+cache.insert("user_1", user { id 1, name "Alice" })
 
-mut nested := Map[str, Vec[int]]()
-nested.insert("primes", Vec[2, 3, 5, 7, 11])
+mut nested := map[str, vec[int]]()
+nested.insert("primes", vec[2, 3, 5, 7, 11])
 ```
 
 ---
@@ -179,8 +179,8 @@ nested.insert("primes", Vec[2, 3, 5, 7, 11])
 ## 5. SETS - Unique Values
 
 ```ryx
-// Set[T]
-mut tags := Set[str]()
+// set[T]
+mut tags := set[str]()
 
 // Add
 tags.insert("rust")
@@ -189,18 +189,18 @@ tags.insert("go")
 tags.insert("rust")  // Duplicate ignored
 
 // Initialize
-languages := Set["Ryx", "Rust", "Go", "Python"]
+languages := set["Ryx", "Rust", "Go", "Python"]
 
 // Check membership
-hasRust := tags.contains("rust")  // true
-hasJava := tags.contains("java")  // false
+has_Rust := tags.contains("rust")  // true
+has_Java := tags.contains("java")  // false
 
 // Remove
 tags.remove("python")
 
 // Set operations
-set1 := Set[1, 2, 3, 4]
-set2 := Set[3, 4, 5, 6]
+set1 := set[1, 2, 3, 4]
+set2 := set[3, 4, 5, 6]
 
 union        := set1.union(set2)        // {1,2,3,4,5,6}
 intersection := set1.intersection(set2) // {3,4}
@@ -212,9 +212,9 @@ loop item in tags {
 }
 
 // Set of structs (must implement Hash + Eq)
-mut userSet := Set[UserId]()
-userSet.insert(123)
-userSet.insert(456)
+mut user_Set := set[user_Id]()
+user_Set.insert(123)
+user_Set.insert(456)
 ```
 
 ---
@@ -231,13 +231,13 @@ coords   := (1.5, 2.3, 4.7)
 x := point.0    // 10
 y := point.1    // 20
 
-name := person.0    // "Alice"
-age  := person.1    // 25
-active := person.2  // true
+name   := person.0    // "Alice"
+age    := person.1    // 25
+active := person.2    // true
 
 // Destructuring
 (x, y) := point
-(name, age, isActive) := person
+(name, age, is_Active) := person
 
 // Return multiple values
 act divmod(a int, b int) (int, int) {
@@ -247,12 +247,12 @@ act divmod(a int, b int) (int, int) {
 (quotient, remainder) := divmod(17, 5)
 
 // Tuple in struct
-struct Response {
+struct response {
     data   str
     status (int, str)  // (code, message)
 }
 
-response := Response {
+response := response {
     data   "Success",
     status (200, "OK"),
 }
@@ -268,50 +268,50 @@ value  := nested.0.1   // 2
 ## 7. OPTION - Nullable Values
 
 ```ryx
-// Option[T] - Some(value) or None
-act findUser(id int) Option[User] {
+// option[T] - some(value) or none
+act find_User(id int) option[user] {
     if id == 1 {
-        retn Some(User { id 1, name "Alice" })
+        retn some(user { id 1, name "Alice" })
     }
-    retn None
+    retn none
 }
 
 // Using Option
-result := findUser(1)
+result := find_User(1)
 
 match result {
-    Some(user) -> println("Found: {user.name}"),
-    None       -> println("Not found"),
+    some(user) -> println("Found: {user.name}"),
+    none       -> println("Not found"),
 }
 
 // Unwrap methods
-user   := result.unwrap()           // Panics if None
-user   := result.unwrap_or(default) // Returns default if None
-user   := result.expect("No user")  // Panics with message
+user := result.unwrap()           // Panics if none
+user := result.unwrap_or(default) // Returns default if none
+user := result.expect("No user")  // Panics with message
 
 // Check if has value
-if result.isSome() {
+if result.is_Some() {
     user := result.unwrap()
 }
 
-if result.isNone() {
+if result.is_None() {
     println("Empty")
 }
 
 // Map and transform
-names := Option[str]
-    .Some("alice")
-    .map(|s| s.toUpperCase())  // Some("ALICE")
+names := option[str]
+    .some("alice")
+    .map(|s| s.to_Upper_Case())  // some("ALICE")
 
 // Option in collections
-mut maybeValues := Vec[Option[int]]()
-maybeValues.push(Some(10))
-maybeValues.push(None)
-maybeValues.push(Some(20))
+mut maybe_Values := vec[option[int]]()
+maybe_Values.push(some(10))
+maybe_Values.push(none)
+maybe_Values.push(some(20))
 
-// Filter out None
-loop item in maybeValues {
-    if let Some(value) = item {
+// Filter out none
+loop item in maybe_Values {
+    if let some(value) = item {
         println(value)
     }
 }
@@ -322,54 +322,54 @@ loop item in maybeValues {
 ## 8. RESULT - Error Handling
 
 ```ryx
-// Result[T, E] - Ok(value) or Err(error)
-act parseAge(input str) Result[int, str] {
+// result[T, E] - ok(value) or err(error)
+act parse_Age(input str) result[int, str] {
     age := input.parse_int()?
     
     if age < 0 {
-        retn Err("Negative age")
+        retn err("Negative age")
     }
     
     if age > 150 {
-        retn Err("Invalid age")
+        retn err("Invalid age")
     }
     
-    retn Ok(age)
+    retn ok(age)
 }
 
 // Using Result
-result := parseAge("25")
+result := parse_Age("25")
 
 match result {
-    Ok(age)  -> println("Age: {age}"),
-    Err(msg) -> eprintln("Error: {msg}"),
+    ok(age)  -> println("Age: {age}"),
+    err(msg) -> eprintln("Error: {msg}"),
 }
 
 // Unwrap methods
-age := result.unwrap()           // Panics if Err
-age := result.unwrap_or(0)       // Default if Err
+age := result.unwrap()           // Panics if err
+age := result.unwrap_or(0)       // Default if err
 age := result.expect("Invalid")  // Panics with message
 
 // Check result
-if result.isOk() {
+if result.is_Ok() {
     age := result.unwrap()
 }
 
-if result.isErr() {
-    error := result.unwrapErr()
+if result.is_Err() {
+    error := result.unwrap_Err()
 }
 
 // Map and transform
-result := Ok(10)
-    .map(|x| x * 2)           // Ok(20)
-    .mapErr(|e| "Error: {e}") // Transform error
+result := ok(10)
+    .map(|x| x * 2)           // ok(20)
+    .map_Err(|e| "Error: {e}") // Transform error
 
 // Chaining with ?
-act process() Result[int, str] {
-    age  := parseAge(input())?
-    user := createUser(age)?
+act process() result[int, str] {
+    age  := parse_Age(input())?
+    user := create_User(age)?
     id   := save(user)?
-    retn Ok(id)
+    retn ok(id)
 }
 ```
 
@@ -391,23 +391,23 @@ age  := 25
 msg  := "Name: {name}, Age: {age}"
 
 // String operations
-length := text.len()              // 11
-isEmpty := text.isEmpty()         // false
+length   := text.len()              // 11
+is_Empty := text.is_Empty()         // false
 
-upper := text.toUpperCase()       // "HELLO, RYX!"
-lower := text.toLowerCase()       // "hello, ryx!"
+upper := text.to_Upper_Case()       // "HELLO, RYX!"
+lower := text.to_Lower_Case()       // "hello, ryx!"
 
 trimmed := "  spaces  ".trim()    // "spaces"
 
 // Contains and search
-hasRyx := text.contains("Ryx")    // true
-startsH := text.startsWith("Hello") // true
-endsEx := text.endsWith("!")      // true
+has_Ryx  := text.contains("Ryx")    // true
+starts_H := text.starts_With("Hello") // true
+ends_Ex  := text.ends_With("!")      // true
 
-index := text.find("Ryx")         // Some(7)
+index := text.find("Ryx")         // some(7)
 
 // Split and join
-parts := "a,b,c,d".split(",")     // ["a", "b", "c", "d"]
+parts  := "a,b,c,d".split(",")     // ["a", "b", "c", "d"]
 joined := parts.join("-")         // "a-b-c-d"
 
 lines := multiline.split("\n")
@@ -420,14 +420,14 @@ slice := text[0..5]               // "Hello"
 chars := text.chars()             // Iterator of chars
 
 // String builder
-mut builder := StringBuilder()
+mut builder := string_Builder()
 builder.append("Hello")
 builder.append(" ")
 builder.append("World")
-result := builder.toString()      // "Hello World"
+result := builder.to_String()      // "Hello World"
 
 // Raw strings (no escaping)
-path := r"C:\Users\Ryx\file.txt"
+path  := r"C:\Users\Ryx\file.txt"
 regex := r"\d+\.\d+"
 ```
 
@@ -440,24 +440,24 @@ regex := r"\d+\.\d+"
 arr := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 // Slice syntax
-first5   := arr[0..5]      // [1, 2, 3, 4, 5]
-middle   := arr[3..7]      // [4, 5, 6, 7]
-last5    := arr[5..10]     // [6, 7, 8, 9, 10]
+first5 := arr[0..5]      // [1, 2, 3, 4, 5]
+middle := arr[3..7]      // [4, 5, 6, 7]
+last5  := arr[5..10]     // [6, 7, 8, 9, 10]
 
 // Inclusive slicing
-range    := arr[2..=5]     // [3, 4, 5, 6]
+range := arr[2..=5]     // [3, 4, 5, 6]
 
 // From start
-prefix   := arr[..4]       // [1, 2, 3, 4]
+prefix := arr[..4]       // [1, 2, 3, 4]
 
 // To end
-suffix   := arr[5..]       // [6, 7, 8, 9, 10]
+suffix := arr[5..]       // [6, 7, 8, 9, 10]
 
 // Full slice
-all      := arr[..]        // [1, 2, 3, ..., 10]
+all := arr[..]        // [1, 2, 3, ..., 10]
 
-// Slice a Vec
-mut vec := Vec[1, 2, 3, 4, 5]
+// Slice a vec
+mut vec := vec[1, 2, 3, 4, 5]
 portion := vec[1..4]       // [2, 3, 4]
 
 // Slice operations
@@ -561,9 +561,9 @@ row   := matrix[0]            // tensor[1.0, 2.0, 3.0]
 submatrix := matrix[0..1, 1..3]
 
 // GPU acceleration
-gpuTensor := tensor[1.0, 2.0, 3.0].toGpu()
-result := gpuTensor * 2.0
-cpuResult := result.toCpu()
+gpu_Tensor := tensor[1.0, 2.0, 3.0].to_Gpu()
+result := gpu_Tensor * 2.0
+cpu_Result := result.to_Cpu()
 ```
 
 ---
@@ -572,58 +572,58 @@ cpuResult := result.toCpu()
 
 ```ryx
 // Stack
-struct Stack[T] {
-    items Vec[T]
+struct stack[T] {
+    items vec[T]
 }
 
-impl Stack[T] {
-    act new() Stack[T] {
-        retn Stack { items Vec[T]() }
+impl stack[T] {
+    act new() stack[T] {
+        retn stack { items vec[T]() }
     }
     
     act push(mut self, item T) {
         self.items.push(item)
     }
     
-    act pop(mut self) Option[T] {
+    act pop(mut self) option[T] {
         retn self.items.pop()
     }
     
-    act peek(self) Option[T] {
+    act peek(self) option[T] {
         retn self.items.last()
     }
 }
 
 // Queue
-struct Queue[T] {
-    items Vec[T]
+struct queue[T] {
+    items vec[T]
 }
 
-impl Queue[T] {
-    act new() Queue[T] {
-        retn Queue { items Vec[T]() }
+impl queue[T] {
+    act new() queue[T] {
+        retn queue { items vec[T]() }
     }
     
     act enqueue(mut self, item T) {
         self.items.push(item)
     }
     
-    act dequeue(mut self) Option[T] {
-        if self.items.isEmpty() {
-            retn None
+    act dequeue(mut self) option[T] {
+        if self.items.is_Empty() {
+            retn none
         }
-        retn Some(self.items.remove(0))
+        retn some(self.items.remove(0))
     }
 }
 
 // LinkedList
-struct Node[T] {
+struct node[T] {
     value T
-    next  Option[shared Node[T]]
+    next  option[shared node[T]]
 }
 
-struct LinkedList[T] {
-    head Option[shared Node[T]]
+struct linked_List[T] {
+    head option[shared node[T]]
     size int
 }
 ```
@@ -633,66 +633,66 @@ struct LinkedList[T] {
 ## 14. COMPLETE DATA STRUCTURE EXAMPLE
 
 ```ryx
-struct Database {
-    users      Map[int, User]
-    sessions   Map[str, Session]
-    tags       Set[str]
-    logs       Vec[LogEntry]
-    cache      Map[str, bytes]
+struct database {
+    users    map[int, user]
+    sessions map[str, session]
+    tags     set[str]
+    logs     vec[log_Entry]
+    cache    map[str, bytes]
 }
 
-struct User {
+struct user {
     id       int
     name     str
     email    str
-    roles    Set[Role]
-    metadata Map[str, str]
+    roles    set[role]
+    metadata map[str, str]
 }
 
-struct Session {
-    token     str
-    userId    int
-    createdAt int
-    expiresAt int
-    data      Map[str, str]
+struct session {
+    token      str
+    user_Id    int
+    created_At int
+    expires_At int
+    data       map[str, str]
 }
 
-struct LogEntry {
+struct log_Entry {
     timestamp int
-    level     LogLevel
+    level     log_Level
     message   str
-    context   Map[str, str]
+    context   map[str, str]
 }
 
-enum LogLevel {
-    Debug,
-    Info,
-    Warning,
-    Error,
+enum log_Level {
+    debug,
+    info,
+    warning,
+    error,
 }
 
-enum Role {
-    Admin,
-    Moderator,
-    User,
+enum role {
+    admin,
+    moderator,
+    user,
 }
 
 act main() {
-    mut db := Database {
-        users    Map[int, User](),
-        sessions Map[str, Session](),
-        tags     Set[str](),
-        logs     Vec[LogEntry](),
-        cache    Map[str, bytes](),
+    mut db := database {
+        users    map[int, user](),
+        sessions map[str, session](),
+        tags     set[str](),
+        logs     vec[log_Entry](),
+        cache    map[str, bytes](),
     }
     
     // Add user
-    user := User {
+    user := user {
         id       1,
         name     "Alice",
         email    "alice@ryx.dev",
-        roles    Set[Role.Admin, Role.User],
-        metadata Map {
+        roles    set[role.admin, role.user],
+        metadata map {
             "country" "USA",
             "city"    "SF",
         },
@@ -701,12 +701,12 @@ act main() {
     db.users.insert(user.id, user)
     
     // Add session
-    session := Session {
-        token     "abc123",
-        userId    1,
-        createdAt now(),
-        expiresAt now() + 3600,
-        data      Map[str, str](),
+    session := session {
+        token      "abc123",
+        user_Id    1,
+        created_At now(),
+        expires_At now() + 3600,
+        data       map[str, str](),
     }
     
     db.sessions.insert(session.token, session)
@@ -716,13 +716,13 @@ act main() {
     db.tags.insert("premium")
     
     // Add log
-    entry := LogEntry {
+    entry := log_Entry {
         timestamp now(),
-        level     LogLevel.Info,
+        level     log_Level.info,
         message   "User logged in",
-        context   Map {
-            "userId" "1",
-            "ip"     "192.168.1.1",
+        context   map {
+            "user_Id" "1",
+            "ip"      "192.168.1.1",
         },
     }
     
@@ -732,4 +732,4 @@ act main() {
 
 ---
 
-**That's ALL data types with complete examples!** 
+**That's ALL data types with Spine Case naming!** 
