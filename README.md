@@ -1,6 +1,6 @@
 <p align="center">
   <!-- Replace with your actual logo path -->
-  <img src="/assets/logos/razen_logo_blue_bg.png" alt="Razen Logo" width="160">
+  <img src="/assets/logos/razen_logo_light.png" alt="Razen Logo" width="160">
 </p>
 
 <h1 align="center">Razen Programming Language</h1>
