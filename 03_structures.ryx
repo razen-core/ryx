@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// 03_structures.ryx
+// 03_structures.rzn
 // Covers: Structs, Enums, Tuples, Alias
 // ─────────────────────────────────────────────────────────────
 
@@ -40,7 +40,7 @@ my_point := Point { x 10.5, y 20.3 }
 alice := User {
     id        1,
     name      "Alice",
-    email     "alice@ryx.dev",
+    email     "alice@razen.dev",
     is_active true,
 }
 
@@ -54,7 +54,7 @@ rect := Rectangle {
 mut bob = User {
     id        2,
     name      "Bob",
-    email     "bob@ryx.dev",
+    email     "bob@razen.dev",
     is_active true,
 }
 
@@ -64,7 +64,7 @@ bob.is_active = false
 
 // Access
 user_name    := alice.name          // "Alice"
-user_email   := alice.email         // "alice@ryx.dev"
+user_email   := alice.email         // "alice@razen.dev"
 rect_width   := rect.width          // 200.0
 origin_x     := rect.origin.x       // 5.0
 

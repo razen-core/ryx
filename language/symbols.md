@@ -1,7 +1,7 @@
-# Ryx Language Specification: Symbols & Operators
+# Razen Language Specification: Symbols & Operators
 
-This document lists the official symbols used in Ryx.  
-**Core Rule:** Ryx uses a **"Constant Syntax"** pattern (`Name Space Type`) and unified dot access (`.`).
+This document lists the official symbols used in Razen.  
+**Core Rule:** Razen uses a **"Constant Syntax"** pattern (`Name Space Type`) and unified dot access (`.`).
 
 ---
 
@@ -53,7 +53,7 @@ This document lists the official symbols used in Ryx.
   - **One-line Function:** `act square(n int) int -> n * n`  
   - **Pattern Match:** `Status.Active -> print("Online")`  
   - **Match Expression:** 
-    ```ryx
+    ```razen
     result := match status {
         Status.Active -> "Online",
         Status.Idle -> "Away"
@@ -63,7 +63,7 @@ This document lists the official symbols used in Ryx.
 ### 3.2 Separators
 - `,` – List Separator.  
   - **Feature:** **Trailing Commas are valid** (and encouraged) in Structs, Enums, and Match blocks.  
-  - **Example:** `User { name "Ryx", age 1, }`
+  - **Example:** `User { name "Razen", age 1, }`
 
 ---
 
@@ -122,7 +122,7 @@ This document lists the official symbols used in Ryx.
 - `?` – **Error Propagation Operator**.  
   - **Usage:** Automatically returns `Err` if the expression fails.  
   - **Example:**  
-    ```ryx
+    ```razen
     act process() Result[int, Error] {
         data := fetch()?      // If fetch fails, return Err immediately
         value := parse(data)? // If parse fails, return Err immediately
@@ -149,7 +149,7 @@ This document lists the official symbols used in Ryx.
   - **Example:** `// This is a comment`
 - `/* ... */` – Multi-line block comment.  
   - **Example:**  
-    ```ryx
+    ```razen
     /*
      * Multi-line comment
      * for documentation

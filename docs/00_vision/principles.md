@@ -1,6 +1,6 @@
 # Core Principles
 
-This document defines the **non-negotiable design principles** of the Ryx programming language. All language features, compiler behavior, tooling, and ecosystem decisions **must conform** to these principles.
+This document defines the **non-negotiable design principles** of the Razen programming language. All language features, compiler behavior, tooling, and ecosystem decisions **must conform** to these principles.
 
 These principles are **normative**. If a proposal violates any principle here, it is rejected unless the principle itself is formally amended.
 
@@ -8,7 +8,7 @@ These principles are **normative**. If a proposal violates any principle here, i
 
 ## 1. Safety by Construction
 
-Ryx prioritizes **compile-time safety guarantees** over runtime checks.
+Razen prioritizes **compile-time safety guarantees** over runtime checks.
 
 * Memory safety must be provable at compile time
 * Data races are forbidden by default
@@ -21,7 +21,7 @@ Ryx prioritizes **compile-time safety guarantees** over runtime checks.
 
 ## 2. Zero-Cost Abstractions
 
-Abstractions in Ryx must not impose runtime overhead.
+Abstractions in Razen must not impose runtime overhead.
 
 * High-level constructs compile to predictable, minimal machine code
 * No hidden allocations
@@ -34,7 +34,7 @@ Abstractions in Ryx must not impose runtime overhead.
 
 ## 3. Explicitness Over Implicitness
 
-Ryx favors **clear intent** over convenience.
+Razen favors **clear intent** over convenience.
 
 * Ownership and borrowing are explicit
 * Mutability is explicit
@@ -47,7 +47,7 @@ Ryx favors **clear intent** over convenience.
 
 ## 4. Deterministic Resource Management
 
-All resources in Ryx have **well-defined lifetimes**.
+All resources in Razen have **well-defined lifetimes**.
 
 * Memory, file handles, sockets, and locks are released deterministically
 * Destruction order is guaranteed
@@ -59,7 +59,7 @@ All resources in Ryx have **well-defined lifetimes**.
 
 ## 5. Strong but Practical Typing
 
-Ryx uses a strong, static type system designed for real systems programming.
+Razen uses a strong, static type system designed for real systems programming.
 
 * Types prevent invalid states
 * No implicit type coercions that hide cost or risk
@@ -85,7 +85,7 @@ Concurrency is a first-class feature and must be **safe by default**.
 
 ## 7. Predictable Performance
 
-Ryx targets **systems-level performance**.
+Razen targets **systems-level performance**.
 
 * Execution cost must be analyzable
 * Compilation must produce consistent results
@@ -109,7 +109,7 @@ Complexity belongs in the compiler, not the runtime.
 
 ## 9. Interoperability as a First-Class Goal
 
-Ryx must integrate cleanly with existing ecosystems.
+Razen must integrate cleanly with existing ecosystems.
 
 * C ABI compatibility is mandatory
 * Clear FFI boundaries
@@ -121,7 +121,7 @@ Ryx must integrate cleanly with existing ecosystems.
 
 ## 10. Evolution Without Fragmentation
 
-Ryx evolves cautiously and coherently.
+Razen evolves cautiously and coherently.
 
 * Backward compatibility is preserved whenever possible
 * Breaking changes require strong justification
@@ -146,7 +146,7 @@ The language is incomplete without excellent tooling.
 
 ## 12. Simplicity Over Cleverness
 
-Ryx rejects unnecessary complexity.
+Razen rejects unnecessary complexity.
 
 * Features must be explainable
 * Orthogonal design is preferred

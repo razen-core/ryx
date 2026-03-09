@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// 05_advanced.ryx
+// 05_advanced.rzn
 // Covers: Tensors, Async, Custom Collections, Combined Example
 // ─────────────────────────────────────────────────────────────
 
@@ -83,7 +83,7 @@ async act fetch(url str) result[str, str] {
 }
 
 async act load_user(id int) result[User, str] {
-    data := fetch("https://api.ryx.dev/users/{id}").await?
+    data := fetch("https://api.razen.dev/users/{id}").await?
     user := parse_json[User](data)?
     ok(user)                       // implicit return
 }
@@ -105,7 +105,7 @@ async act process(url str) result[str, str] {
 // Await multiple
 async act load_dashboard(user_id int) result[str, str] {
     user    := load_user(user_id).await?
-    data    := fetch("https://api.ryx.dev/data/{user_id}").await?
+    data    := fetch("https://api.razen.dev/data/{user_id}").await?
     ok("Dashboard for {user.name}: {data}")
 }
 
@@ -309,7 +309,7 @@ act main() {
     alice := AppUser {
         id     1,
         name   "Alice",
-        email  "alice@ryx.dev",
+        email  "alice@razen.dev",
         roles  set{Role.Admin, Role.Member},
         scores vec[88.5, 92.0, 79.5, 95.0],
         meta   map{"city" "SF", "plan" "premium"},
@@ -318,7 +318,7 @@ act main() {
     bob := AppUser {
         id     2,
         name   "Bob",
-        email  "bob@ryx.dev",
+        email  "bob@razen.dev",
         roles  set{Role.Member},
         scores vec[70.0, 65.5, 80.0],
         meta   map{"city" "NY", "plan" "basic"},

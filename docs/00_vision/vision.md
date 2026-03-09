@@ -1,30 +1,30 @@
-# Ryx Programming Language
+# Razen Programming Language
 
 ## Vision & Core Philosophy
 
 ---
 
-## 1. What Ryx Is
+## 1. What Razen Is
 
-**Ryx is a deterministic, systems-level programming language designed for performance-critical, safety-critical, and large-scale software—without imposing cognitive or syntactic burden on developers.**
+**Razen is a deterministic, systems-level programming language designed for performance-critical, safety-critical, and large-scale software—without imposing cognitive or syntactic burden on developers.**
 
-Ryx is built on the belief that:
+Razen is built on the belief that:
 
 > **The compiler should perform complex reasoning so developers can write simple, direct code.**
 
-Ryx achieves this by combining:
+Razen achieves this by combining:
 
 * Deterministic memory behavior
 * Compiler-enforced safety
 * Minimal, expressive syntax
 * Zero-cost abstractions
-* Source-to-source compilation (Ryx → C → Machine)
+* Source-to-source compilation (Razen → C → Machine)
 
 ---
 
 ## 2. Primary Goals
 
-Ryx is designed to satisfy **all** of the following simultaneously:
+Razen is designed to satisfy **all** of the following simultaneously:
 
 1. **Native-level performance**
    Performance comparable to C, C++, and Rust.
@@ -48,7 +48,7 @@ Ryx is designed to satisfy **all** of the following simultaneously:
 
 ## 3. Non-Goals (Explicitly Rejected)
 
-Ryx intentionally does **not** aim to be:
+Razen intentionally does **not** aim to be:
 
 * A garbage-collected language
 * A dynamically typed language
@@ -63,7 +63,7 @@ If a feature compromises determinism, predictability, or safety, it is rejected.
 
 ## 4. Determinism as a First-Class Principle
 
-Ryx treats **determinism** as non-negotiable.
+Razen treats **determinism** as non-negotiable.
 
 This means:
 
@@ -72,7 +72,7 @@ This means:
 * No unpredictable pauses
 * No hidden allocations beyond compiler-defined rules
 
-If a Ryx program compiles, its memory behavior is:
+If a Razen program compiles, its memory behavior is:
 
 * **Predictable**
 * **Reproducible**
@@ -82,7 +82,7 @@ If a Ryx program compiles, its memory behavior is:
 
 ## 5. The DASO Memory Model (High-Level Vision)
 
-Ryx’s memory model is **Deterministic Automatic Scoped Ownership (DASO)**.
+Razen’s memory model is **Deterministic Automatic Scoped Ownership (DASO)**.
 
 At a conceptual level:
 
@@ -95,7 +95,7 @@ At a conceptual level:
 The developer’s mental model is intentionally simple:
 
 > “If it doesn’t escape, I don’t think about memory.”
-> “If it escapes, Ryx handles it.”
+> “If it escapes, Razen handles it.”
 > “If I share, I say `shared`.”
 > “If I need raw power, I use `unsafe`.”
 
@@ -103,7 +103,7 @@ The developer’s mental model is intentionally simple:
 
 ## 6. Safety Contract
 
-For all **safe Ryx code**, the language guarantees:
+For all **safe Razen code**, the language guarantees:
 
 * No use-after-free
 * No double-free
@@ -121,7 +121,7 @@ Unsafe code exists as an **explicit escape hatch**, isolated and opt-in.
 
 ## 7. Compiler-Centric Design Philosophy
 
-Ryx follows a strict separation of responsibility:
+Razen follows a strict separation of responsibility:
 
 | Responsibility        | Owner                |
 | --------------------- | -------------------- |
@@ -146,7 +146,7 @@ All such complexity is intentionally hidden.
 
 ## 8. Syntax Philosophy
 
-Ryx syntax is designed to be:
+Razen syntax is designed to be:
 
 * Flat
 * Readable
@@ -162,13 +162,13 @@ Key principles:
 * Trailing commas are valid and encouraged
 * Expression-oriented where it improves clarity
 
-Ryx prefers **clarity over cleverness**.
+Razen prefers **clarity over cleverness**.
 
 ---
 
 ## 9. Explicit Power, Never Implicit Cost
 
-Ryx allows:
+Razen allows:
 
 * Concurrency
 * Shared memory
@@ -194,10 +194,10 @@ This ensures:
 
 ## 10. Source-to-Source Compilation Strategy
 
-Ryx compiles as follows:
+Razen compiles as follows:
 
 ```
-Ryx Source
+Razen Source
   → Rust Compiler Frontend
   → Verified IR
   → C Source Code
@@ -219,7 +219,7 @@ C is treated as a **transport language**, not a semantic layer.
 
 ## 11. Target Domains
 
-Ryx is designed for:
+Razen is designed for:
 
 * Compilers and language tools
 * Game engines
@@ -229,7 +229,7 @@ Ryx is designed for:
 * AI/ML infrastructure
 * Embedded and systems software
 
-Ryx is **not** optimized for:
+Razen is **not** optimized for:
 
 * Rapid scripting
 * UI-heavy application glue
@@ -239,7 +239,7 @@ Ryx is **not** optimized for:
 
 ## 12. Long-Term Stability Philosophy
 
-Ryx follows a **conservative evolution model**:
+Razen follows a **conservative evolution model**:
 
 * Core semantics are stable
 * Breaking changes are rare and versioned
@@ -252,7 +252,7 @@ Once a rule is part of the language contract, it is treated as permanent.
 
 ## 13. Guiding Principle (Final)
 
-Ryx exists to prove that:
+Razen exists to prove that:
 
 > **High performance, strong safety, deterministic behavior, and low cognitive load are not trade-offs.**
 
@@ -260,8 +260,8 @@ They are design choices.
 
 ---
 
-### Ryx Vision Statement
+### Razen Vision Statement
 
-**Ryx is a language where developers write simple code,
+**Razen is a language where developers write simple code,
 the compiler does the hard work,
 and the machine executes with zero ambiguity.**

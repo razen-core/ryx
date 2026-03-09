@@ -4,7 +4,7 @@
 
 ## 1. PRIMITIVES
 
-```ryx
+```razen
 // bool
 is_Active := true
 has_Error := false
@@ -26,7 +26,7 @@ price    := 99.99
 scientific := 1.5e-10
 
 // str (UTF-8)
-name     := "Ryx"
+name     := "Razen"
 emoji    := "🚀💻"
 template := "Hello, {name}!"
 
@@ -39,7 +39,7 @@ buffer   := bytes[1024]  // 1024 zero bytes
 
 ## 2. ARRAYS - Fixed Size
 
-```ryx
+```razen
 // Fixed-size array [type; size]
 numbers  := [int; 5]           // [0, 0, 0, 0, 0]
 values   := [1, 2, 3, 4, 5]    // Type inferred: [int; 5]
@@ -72,7 +72,7 @@ loop (index, value) in arr.enumerate() {
 
 ## 3. VECTORS - Dynamic Size
 
-```ryx
+```razen
 // vec[T] - growable array
 mut nums := vec[int]()
 
@@ -115,7 +115,7 @@ matrix.push(vec[4, 5, 6])
 
 ## 4. MAPS - Key-Value Storage
 
-```ryx
+```razen
 // map[K, V]
 mut scores := map[str, int]()
 
@@ -178,7 +178,7 @@ nested.insert("primes", vec[2, 3, 5, 7, 11])
 
 ## 5. SETS - Unique Values
 
-```ryx
+```razen
 // set[T]
 mut tags := set[str]()
 
@@ -189,7 +189,7 @@ tags.insert("go")
 tags.insert("rust")  // Duplicate ignored
 
 // Initialize
-languages := set["Ryx", "Rust", "Go", "Python"]
+languages := set["Razen", "Rust", "Go", "Python"]
 
 // Check membership
 has_Rust := tags.contains("rust")  // true
@@ -221,7 +221,7 @@ user_Set.insert(456)
 
 ## 6. TUPLES - Fixed Groups
 
-```ryx
+```razen
 // Tuple (unnamed fields)
 point    := (10, 20)
 person   := ("Alice", 25, true)
@@ -267,7 +267,7 @@ value  := nested.0.1   // 2
 
 ## 7. OPTION - Nullable Values
 
-```ryx
+```razen
 // option[T] - some(value) or none
 act find_User(id int) option[user] {
     if id == 1 {
@@ -321,7 +321,7 @@ loop item in maybe_Values {
 
 ## 8. RESULT - Error Handling
 
-```ryx
+```razen
 // result[T, E] - ok(value) or err(error)
 act parse_Age(input str) result[int, str] {
     age := input.parse_int()?
@@ -377,9 +377,9 @@ act process() result[int, str] {
 
 ## 9. STRINGS - Text Operations
 
-```ryx
+```razen
 // String creation
-text := "Hello, Ryx!"
+text := "Hello, Razen!"
 empty := ""
 multiline := "Line 1
 Line 2
@@ -395,16 +395,16 @@ length   := text.len()              // 11
 is_Empty := text.is_Empty()         // false
 
 upper := text.to_Upper_Case()       // "HELLO, RYX!"
-lower := text.to_Lower_Case()       // "hello, ryx!"
+lower := text.to_Lower_Case()       // "hello, razen!"
 
 trimmed := "  spaces  ".trim()    // "spaces"
 
 // Contains and search
-has_Ryx  := text.contains("Ryx")    // true
+has_Razen  := text.contains("Razen")    // true
 starts_H := text.starts_With("Hello") // true
 ends_Ex  := text.ends_With("!")      // true
 
-index := text.find("Ryx")         // some(7)
+index := text.find("Razen")         // some(7)
 
 // Split and join
 parts  := "a,b,c,d".split(",")     // ["a", "b", "c", "d"]
@@ -413,7 +413,7 @@ joined := parts.join("-")         // "a-b-c-d"
 lines := multiline.split("\n")
 
 // Replace
-replaced := text.replace("Ryx", "World")
+replaced := text.replace("Razen", "World")
 
 // Substring
 slice := text[0..5]               // "Hello"
@@ -427,7 +427,7 @@ builder.append("World")
 result := builder.to_String()      // "Hello World"
 
 // Raw strings (no escaping)
-path  := r"C:\Users\Ryx\file.txt"
+path  := r"C:\Users\Razen\file.txt"
 regex := r"\d+\.\d+"
 ```
 
@@ -435,7 +435,7 @@ regex := r"\d+\.\d+"
 
 ## 10. SLICES - Views into Arrays/Vecs
 
-```ryx
+```razen
 // Slice - borrowed view
 arr := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
@@ -473,7 +473,7 @@ loop item in portion {
 
 ## 11. RANGES - Iterators
 
-```ryx
+```razen
 // Exclusive range
 range1 := 0..10           // 0 to 9
 
@@ -516,7 +516,7 @@ loop c in 'a'..='z' {
 
 ## 12. TENSORS - Multi-Dimensional Arrays (AI/ML)
 
-```ryx
+```razen
 // 1D tensor (vector)
 vec := tensor[1.0, 2.0, 3.0, 4.0]
 
@@ -570,7 +570,7 @@ cpu_Result := result.to_Cpu()
 
 ## 13. CUSTOM COLLECTIONS
 
-```ryx
+```razen
 // Stack
 struct stack[T] {
     items vec[T]
@@ -632,7 +632,7 @@ struct linked_List[T] {
 
 ## 14. COMPLETE DATA STRUCTURE EXAMPLE
 
-```ryx
+```razen
 struct database {
     users    map[int, user]
     sessions map[str, session]
@@ -690,7 +690,7 @@ act main() {
     user := user {
         id       1,
         name     "Alice",
-        email    "alice@ryx.dev",
+        email    "alice@razen.dev",
         roles    set[role.admin, role.user],
         metadata map {
             "country" "USA",

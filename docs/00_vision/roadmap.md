@@ -1,6 +1,6 @@
 # Roadmap
 
-This document defines the **end-to-end roadmap** for building the Ryx programming language from zero to production-ready.
+This document defines the **end-to-end roadmap** for building the Razen programming language from zero to production-ready.
 
 The roadmap is structured in **phases**, each with clear goals, deliverables, and exit criteria. Progression is linear by default; skipping phases is strongly discouraged.
 
@@ -23,7 +23,7 @@ Establish absolute clarity of intent before any compiler code is written.
 ### Exit Criteria
 
 * Every core decision can be justified using the principles
-* No ambiguity about what Ryx is **not** trying to be
+* No ambiguity about what Razen is **not** trying to be
 
 ---
 
@@ -31,7 +31,7 @@ Establish absolute clarity of intent before any compiler code is written.
 
 ### Goal
 
-Define Ryx completely **on paper**.
+Define Razen completely **on paper**.
 
 ### Deliverables
 
@@ -47,7 +47,7 @@ Define Ryx completely **on paper**.
 
 ### Exit Criteria
 
-* A programmer can write valid Ryx code without a compiler
+* A programmer can write valid Razen code without a compiler
 * Syntax and semantics are unambiguous
 * No feature contradicts core principles
 
@@ -62,7 +62,7 @@ Create a working compiler pipeline without full language support.
 ### Deliverables
 
 * Rust workspace structure
-* CLI (`ryx build`, `ryx check`)
+* CLI (`razen build`, `razen check`)
 * Lexer (token stream)
 * Parser (AST generation)
 * Error reporting framework
@@ -70,7 +70,7 @@ Create a working compiler pipeline without full language support.
 
 ### Exit Criteria
 
-* Ryx source parses into a stable AST
+* Razen source parses into a stable AST
 * Errors are precise and actionable
 * Compiler runs deterministically
 
@@ -80,7 +80,7 @@ Create a working compiler pipeline without full language support.
 
 ### Goal
 
-Make Ryx **correct**, not yet powerful.
+Make Razen **correct**, not yet powerful.
 
 ### Deliverables
 
@@ -120,11 +120,11 @@ Implement the essential systems-language feature set.
 
 ---
 
-## Phase 5 – Source-to-Source Compilation (Ryx → C)
+## Phase 5 – Source-to-Source Compilation (Razen → C)
 
 ### Goal
 
-Lower Ryx into **portable, analyzable C**.
+Lower Razen into **portable, analyzable C**.
 
 ### Deliverables
 
@@ -166,12 +166,12 @@ Achieve predictable, high performance.
 
 ### Goal
 
-Make Ryx usable day-to-day.
+Make Razen usable day-to-day.
 
 ### Deliverables
 
-* Formatter (`ryx fmt`)
-* Linter (`ryx lint`)
+* Formatter (`razen fmt`)
+* Linter (`razen lint`)
 * Language Server Protocol (LSP)
 * Documentation generator
 * Debug symbol support
@@ -187,7 +187,7 @@ Make Ryx usable day-to-day.
 
 ### Goal
 
-Integrate Ryx into real-world systems.
+Integrate Razen into real-world systems.
 
 ### Deliverables
 
@@ -198,7 +198,7 @@ Integrate Ryx into real-world systems.
 
 ### Exit Criteria
 
-* Ryx can replace C in selected domains
+* Razen can replace C in selected domains
 
 ---
 
@@ -206,7 +206,7 @@ Integrate Ryx into real-world systems.
 
 ### Goal
 
-Prepare Ryx for long-term use.
+Prepare Razen for long-term use.
 
 ### Deliverables
 
@@ -226,7 +226,7 @@ Prepare Ryx for long-term use.
 
 ### Goal
 
-Sustain Ryx without fragmentation.
+Sustain Razen without fragmentation.
 
 ### Deliverables
 
@@ -237,7 +237,7 @@ Sustain Ryx without fragmentation.
 
 ### Exit Criteria
 
-* Ryx evolves without losing coherence
+* Razen evolves without losing coherence
 
 ---
 

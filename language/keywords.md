@@ -1,7 +1,7 @@
-# Ryx Language Specification: Keywords
+# Razen Language Specification: Keywords
 
-This document serves as the official reference for the Ryx programming language.  
-**Philosophy:** Ryx combines the simplicity of Go, the safety of Rust, and the power of Python for AI/ML.  
+This document serves as the official reference for the Razen programming language.  
+**Philosophy:** Razen combines the simplicity of Go, the safety of Rust, and the power of Python for AI/ML.  
 **Total Keywords:** ~25 (Lightweight & Modern).
 
 ---
@@ -121,7 +121,7 @@ These are **not keywords** but are always available:
 - `Result<T, E>` – Enum with variants `Ok(T)` or `Err(E)` (represents operations that can fail).
 
 *Example:*
-```ryx
+```razen
 age := input().parse_int()  // Returns Result<int, ParseError>
 user := users.get(id)       // Returns Option<User>
 ```
@@ -138,7 +138,7 @@ user := users.get(id)       // Returns Option<User>
 - `NAN`    – Not-a-Number
 
 *Usage:*
-```ryx
+```razen
 use std.math
 
 area := math.PI * r * r

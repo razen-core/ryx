@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// 01_primitives.ryx
+// 01_primitives.rzn
 // Covers: Primitives, Strings, Ranges
 // Rules:
 //   := immutable   |   mut = mutable   |   const = constant
@@ -48,14 +48,14 @@ temperature = 37.2
 const PI float = 3.14159265358979
 
 // str
-name     str := "Ryx"
+name     str := "Razen"
 greeting str := "Hello, {name}!"
 empty    str := ""
 
 mut username str = "guest"
 username = "Alice"
 
-const APP_NAME str = "Ryx Lang"
+const APP_NAME str = "Razen Lang"
 const VERSION  str = "1.0.0"
 
 // bytes
@@ -75,14 +75,14 @@ act clear_screen() void {
 user_id    := 1
 ratio      := 0.75
 is_ready   := true
-lang       := "Ryx"
+lang       := "Razen"
 
 
 // ══════════════════════════════════════════════════════════════
 // 2. STRINGS
 // ══════════════════════════════════════════════════════════════
 
-text      := "Hello, Ryx!"
+text      := "Hello, Razen!"
 user_name := "Alice"
 age       := 25
 
@@ -91,7 +91,7 @@ msg       := "Name: {user_name}, Age: {age}"
 calc_msg  := "Next year: {age + 1}"
 
 // Raw strings (no escape processing)
-file_path := r"C:\Users\ryx\notes.txt"
+file_path := r"C:\Users\razen\notes.txt"
 pattern   := r"\d+\.\d+"
 
 // Multiline
@@ -103,17 +103,17 @@ Line 3"
 length    := text.len()                     // 11
 is_empty  := text.is_empty()                // false
 upper     := text.to_upper_case()           // "HELLO, RYX!"
-lower     := text.to_lower_case()           // "hello, ryx!"
+lower     := text.to_lower_case()           // "hello, razen!"
 trimmed   := "  spaces  ".trim()            // "spaces"
 
 // Search
-has_ryx   := text.contains("Ryx")           // true
+has_razen   := text.contains("Razen")           // true
 starts_h  := text.starts_with("Hello")      // true
 ends_excl := text.ends_with("!")            // true
-found_idx := text.find("Ryx")               // some(7)
+found_idx := text.find("Razen")               // some(7)
 
 // Replace & slice
-replaced  := text.replace("Ryx", "World")  // "Hello, World!"
+replaced  := text.replace("Razen", "World")  // "Hello, World!"
 slice     := text[0..5]                     // "Hello"
 
 // Split & join
@@ -128,8 +128,8 @@ flt_res   := "3.14".parse_float()           // result[float, ParseError]
 mut b := string_builder()
 b.append("Hello")
 b.append(", ")
-b.append("Ryx!")
-final_str := b.to_string()                  // "Hello, Ryx!"
+b.append("Razen!")
+final_str := b.to_string()                  // "Hello, Razen!"
 
 
 // ══════════════════════════════════════════════════════════════

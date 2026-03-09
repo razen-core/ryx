@@ -2,13 +2,13 @@
 
 ## Deterministic Automatic Scoped Ownership
 
-### The Memory Management Model of the Ryx Programming Language
+### The Memory Management Model of the Razen Programming Language
 
 ---
 
 ## 1. Overview
 
-**DASO (Deterministic Automatic Scoped Ownership)** is Ryx’s native memory management model.
+**DASO (Deterministic Automatic Scoped Ownership)** is Razen’s native memory management model.
 
 It is designed to achieve:
 
@@ -33,7 +33,7 @@ Without inheriting their weaknesses.
 
 ## 2. Design Philosophy
 
-Ryx follows three core principles:
+Razen follows three core principles:
 
 1. **Determinism over heuristics**
    Memory must be freed at known points in time.
@@ -50,17 +50,17 @@ Ryx follows three core principles:
 
 ### 3.1 Function-Level Memory Regions
 
-Every `act` in Ryx implicitly creates a **memory region**.
+Every `act` in Razen implicitly creates a **memory region**.
 
 * All allocations inside the scope go into that region
 * The region is freed **entirely and instantly** when the scope ends
 * Deallocation is **O(1)**
 
-```ryx
+```razen
 act compute() {
     a := Vec
     b := Map[str, int]()
-    c := User { id 1, name "Ryx" }
+    c := User { id 1, name "Razen" }
 }
 // entire region freed here
 ```
@@ -72,9 +72,9 @@ act compute() {
 | C              | Manual, error-prone      |
 | Rust           | Drop per value (O(n))    |
 | GC             | Deferred, unpredictable  |
-| **Ryx (DASO)** | One pointer reset (O(1)) |
+| **Razen (DASO)** | One pointer reset (O(1)) |
 
-This is the foundation of Ryx’s performance.
+This is the foundation of Razen’s performance.
 
 ---
 
@@ -82,7 +82,7 @@ This is the foundation of Ryx’s performance.
 
 If a value **escapes its defining scope**, the compiler automatically promotes it.
 
-```ryx
+```razen
 act make_user() User {
     u := User { id 1, name "A" }
     retn u
@@ -101,7 +101,7 @@ act make_user() User {
 
 ## 5. Ownership Model (Lite, Implicit, Inferred)
 
-Ryx uses **ownership semantics**, but avoids Rust’s verbosity.
+Razen uses **ownership semantics**, but avoids Rust’s verbosity.
 
 ### 5.1 Ownership Rules
 
@@ -110,13 +110,13 @@ Ryx uses **ownership semantics**, but avoids Rust’s verbosity.
 * Borrows are inferred
 * No lifetime syntax exists in the language
 
-```ryx
+```razen
 u := User()
 v := u       // move
 // u is now invalid
 ```
 
-```ryx
+```razen
 act print(user User) {
     std.io.print(user.name)
 }
@@ -133,7 +133,7 @@ The compiler ensures safety without exposing complexity.
 
 Shared ownership is **opt-in** using `shared`.
 
-```ryx
+```razen
 shared cache := Map[str, Data]()
 ```
 
@@ -144,7 +144,7 @@ shared cache := Map[str, Data]()
 * Atomic when crossing `async` / `fork`
 * Compiler warns on excessive sharing
 
-```ryx
+```razen
 shared node := Node()
 a := node
 b := node
@@ -158,7 +158,7 @@ This avoids Rust’s `Rc<RefCell<T>>` patterns and runtime borrow failures.
 
 `defer` schedules code to run when a scope exits.
 
-```ryx
+```razen
 act read() {
     f := File.open("a.txt")
     defer f.close()
@@ -175,7 +175,7 @@ act read() {
 
 For low-level systems code:
 
-```ryx
+```razen
 unsafe {
     buf := alloc(1024)
     use(buf)
@@ -191,9 +191,9 @@ unsafe {
 
 ## 9. Comparison with Other Languages
 
-### 9.1 Ryx vs C/C++
+### 9.1 Razen vs C/C++
 
-| Aspect        | C/C++     | Ryx                    |
+| Aspect        | C/C++     | Razen                    |
 | ------------- | --------- | ---------------------- |
 | Memory safety | Manual    | Compiler-enforced      |
 | Leaks         | Common    | Impossible (safe code) |
@@ -202,22 +202,22 @@ unsafe {
 
 ---
 
-### 9.2 Ryx vs Rust
+### 9.2 Razen vs Rust
 
-| Aspect         | Rust         | Ryx               |
+| Aspect         | Rust         | Razen               |
 | -------------- | ------------ | ----------------- |
 | Lifetimes      | Explicit     | None              |
 | Borrow checker | User-visible | Compiler-internal |
 | Verbosity      | High         | Low               |
 | Safety         | Excellent    | Excellent         |
 
-Ryx keeps Rust’s guarantees while removing its friction.
+Razen keeps Rust’s guarantees while removing its friction.
 
 ---
 
-### 9.3 Ryx vs GC Languages (Java, Python, Go)
+### 9.3 Razen vs GC Languages (Java, Python, Go)
 
-| Aspect          | GC Languages | Ryx       |
+| Aspect          | GC Languages | Razen       |
 | --------------- | ------------ | --------- |
 | GC pauses       | Yes          | Never     |
 | Memory overhead | High         | Low       |
@@ -235,7 +235,7 @@ Ryx keeps Rust’s guarantees while removing its friction.
 * No background threads
 * No global runtime GC
 
-This makes Ryx suitable for:
+This makes Razen suitable for:
 
 * Game engines
 * Compilers
@@ -248,7 +248,7 @@ This makes Ryx suitable for:
 ## 11. Developer Mental Model
 
 > “If it doesn’t escape, I don’t think about memory.”
-> “If it escapes, Ryx handles it.”
+> “If it escapes, Razen handles it.”
 > “If I share, I say `shared`.”
 > “If I need raw power, I use `unsafe`.”
 
@@ -274,7 +274,7 @@ Anything beyond this would require:
 
 ## 13. Summary
 
-**DASO makes Ryx:**
+**DASO makes Razen:**
 
 * Faster than GC-based languages
 * Safer than C/C++
@@ -287,5 +287,5 @@ It is a **carefully integrated synthesis** of proven techniques.
 
 ---
 
-**Ryx Memory Model:**
+**Razen Memory Model:**
 **Deterministic. Automatic. Safe. Fast.**

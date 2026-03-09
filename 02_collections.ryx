@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// 02_collections.ryx
+// 02_collections.rzn
 // Covers: Arrays, Vectors, Maps, Sets, Slices
 // Rules:
 //   [] = ordered/indexed (arrays, vecs)
@@ -70,7 +70,7 @@ mut labels vec[str] = vec[]
 
 // With values (inferred)
 values   := vec[1, 2, 3, 4, 5]
-words    := vec["Ryx", "Rust", "Go"]
+words    := vec["Razen", "Rust", "Go"]
 
 // Mutable with values
 mut scores = vec[90, 85, 78, 92]
@@ -94,7 +94,7 @@ first    := scores[0]            // 90
 mut buffer vec[int] = vec[]
 buffer = vec[int].with_capacity(1000)
 
-// Vec of structs — (User defined in 03_structures.ryx)
+// Vec of structs — (User defined in 03_structures.razen)
 // mut users vec[User] = vec[]
 // users.push(User { id 1, name "Alice", is_active true })
 
@@ -164,7 +164,7 @@ loop val in scores.values() {
 
 // Nested map
 mut tag_map map{str, vec[str]} = map{}
-tag_map.insert("tech",  vec["rust", "ryx", "go"])
+tag_map.insert("tech",  vec["rust", "razen", "go"])
 tag_map.insert("sport", vec["football", "tennis"])
 
 
@@ -181,22 +181,22 @@ mut langs    set{str} = set{}
 mut user_ids set{int} = set{}
 
 // With values (inferred)
-tags     := set{"rust", "ryx", "go", "python"}
+tags     := set{"rust", "razen", "go", "python"}
 primes   := set{2, 3, 5, 7, 11}
 
 // Mutable with values
 mut roles = set{"admin", "member", "moderator"}
 
 // Insert (duplicates ignored)
-langs.insert("Ryx")
+langs.insert("Razen")
 langs.insert("Rust")
-langs.insert("Ryx")            // ignored
+langs.insert("Razen")            // ignored
 
 // Remove
 langs.remove("Rust")
 
 // Check
-has_ryx := langs.contains("Ryx")   // true
+has_razen := langs.contains("Razen")   // true
 has_java := langs.contains("Java") // false
 count    := langs.len()
 

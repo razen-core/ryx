@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// 04_safety.ryx
+// 04_safety.rzn
 // Covers: Option, Result, Closures, Traits, Generics, Shared
 // ─────────────────────────────────────────────────────────────
 
@@ -30,7 +30,7 @@ act find_user(id int) option[User] {
     if id == 1 {
         retn some(User {
             id 1, name "Alice",
-            email "alice@ryx.dev", is_active true,
+            email "alice@razen.dev", is_active true,
         })
     }
     none                              // implicit return
@@ -57,7 +57,7 @@ is_empty  := missing.is_none()
 
 // Map / transform
 upper_name := some("alice").map(|s| s.to_upper_case())   // some("ALICE")
-email_opt  := find_user(1).map(|u| u.email)              // some("alice@ryx.dev")
+email_opt  := find_user(1).map(|u| u.email)              // some("alice@razen.dev")
 
 // Option in vec — filter out nones
 mut maybe_scores = vec[some(90), none, some(75), none, some(88)]
@@ -91,7 +91,7 @@ act create_user(name str, age_str str) result[User, str] {
     ok(User {
         id        0,
         name      name,
-        email     "{name}@ryx.dev",
+        email     "{name}@razen.dev",
         is_active age >= 18,
     })
 }

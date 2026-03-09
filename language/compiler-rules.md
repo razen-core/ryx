@@ -1,4 +1,4 @@
-# Ryx Compiler Rules
+# Razen Compiler Rules
 
 ## Formal Memory, Ownership, and Safety Guarantees
 
@@ -8,7 +8,7 @@
 
 ## 1. Purpose of This Document
 
-This document defines the **observable compiler rules and guarantees** enforced by the Ryx compiler.
+This document defines the **observable compiler rules and guarantees** enforced by the Razen compiler.
 
 * It explains **what the compiler guarantees**
 * It does **not** expose internal algorithms
@@ -42,7 +42,7 @@ These exist, but are **compiler responsibilities**.
 
 ## 3. Core Safety Contract
 
-For all **safe Ryx code**, the compiler guarantees:
+For all **safe Razen code**, the compiler guarantees:
 
 1. No use-after-free
 2. No double-free
@@ -269,7 +269,7 @@ For deeper understanding:
 
 ## 14. Final Statement
 
-Ryx’s compiler rules exist to ensure that:
+Razen’s compiler rules exist to ensure that:
 
 * Developers write simple code
 * The compiler performs complex reasoning
@@ -280,5 +280,5 @@ This separation is intentional.
 
 ---
 
-**Ryx Compiler Rule Philosophy:**
+**Razen Compiler Rule Philosophy:**
 *The compiler does the hard work so developers do not have to.*

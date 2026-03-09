@@ -1,6 +1,6 @@
-# The Ryx Module System: `use` and `pub`
+# The Razen Module System: `use` and `pub`
 
-Ryx has a simple yet powerful module system designed to be predictable and scale from small scripts to massive projects without complex configuration files.
+Razen has a simple yet powerful module system designed to be predictable and scale from small scripts to massive projects without complex configuration files.
 
 **Core Philosophy:**
 1.  **Every file is a module.**
@@ -13,7 +13,7 @@ Ryx has a simple yet powerful module system designed to be predictable and scale
 
 To make a function, struct, enum, or constant accessible to other files, you must mark it as public with the `pub` keyword. If `pub` is not present, the item can only be used inside its own file.
 
-**Example: `math.ryx`**
+**Example: `math.razen`**
 ```
 // This struct is public and can be imported by other files.
 pub struct Vector {
@@ -34,7 +34,7 @@ act internal_helper() {
 
 ## 2. Importing with `use`
 
-The `use` keyword is the universal way to bring code from other modules into the current file. Ryx automatically handles file extensions; you never need to type `.ryx`.
+The `use` keyword is the universal way to bring code from other modules into the current file. Razen automatically handles file extensions; you never need to type `.razen`.
 
 ### 2.1. Basic Import (Sibling Files)
 
@@ -43,11 +43,11 @@ If files are in the same folder, just `use` the filename.
 **File Structure:**
 ```
 /project
-  ├── main.ryx
-  └── math.ryx
+  ├── main.razen
+  └── math.razen
 ```
 
-**Code in `main.ryx`:**
+**Code in `main.razen`:**
 ```
 // Import the 'math' module
 use math
@@ -66,18 +66,18 @@ Folders act as namespaces. To import from a sub-folder, replace the `/` with a `
 **File Structure:**
 ```
 /project
-  ├── main.ryx
+  ├── main.razen
   └── utils
-      └── network.ryx
+      └── network.razen
 ```
 
-**Code in `main.ryx`:**
+**Code in `main.razen`:**
 ```
 // Import the 'network' module from the 'utils' folder
 use utils.network
 
 act main() {
-    utils.network.connect("https://ryx.dev")
+    utils.network.connect("https://razen.dev")
 }
 ```
 
@@ -85,7 +85,7 @@ act main() {
 
 To avoid typing the module name repeatedly, you can import specific items directly into your scope using `{ }`.
 
-**Code in `main.ryx`:**
+**Code in `main.razen`:**
 ```
 // Import only the 'add' action and 'Vector' struct
 use math { add, Vector, }
@@ -101,7 +101,7 @@ act main() {
 
 If you have a naming conflict or want a shorter name, use the `as` keyword.
 
-**Code in `main.ryx`:**
+**Code in `main.razen`:**
 ```
 use utils.network as net
 use my_long_database_module as db
@@ -116,27 +116,27 @@ act main() {
 
 ## 3. Advanced Organization
 
-### 3.1. Folder as a Module: `mod.ryx`
+### 3.1. Folder as a Module: `mod.razen`
 
-Sometimes you want to import a whole folder as a single unit. If you place a special file named `mod.ryx` inside a folder, it acts as the "entry point" for that module. It can re-export public items from its sibling files.
+Sometimes you want to import a whole folder as a single unit. If you place a special file named `mod.razen` inside a folder, it acts as the "entry point" for that module. It can re-export public items from its sibling files.
 
 **File Structure:**
 ```
 /project
   └── database
-      ├── mod.ryx  <-- The folder's public API
-      ├── connection.ryx
-      └── query.ryx
+      ├── mod.razen  <-- The folder's public API
+      ├── connection.razen
+      └── query.razen
 ```
 
-**Code in `database/mod.ryx`:**
+**Code in `database/mod.razen`:**
 ```
 // Re-export the public items from other files in this folder
 pub use connection { connect, }
 pub use query { run_query, }
 ```
 
-**Code in `main.ryx`:**
+**Code in `main.razen`:**
 ```
 // Now you can import the entire 'database' folder as one module
 use database
@@ -155,14 +155,14 @@ In deeply nested projects, using relative paths like `../../` is confusing. To i
 **File Structure:**
 ```
 /project
-  ├── config.ryx
+  ├── config.razen
   └── app
       └── http
           └── controllers
-              └── auth.ryx
+              └── auth.razen
 ```
 
-**Code in `auth.ryx`:**
+**Code in `auth.razen`:**
 ```
 // Instead of '../../../../config', we use the clean root path
 use ~.config
