@@ -8,12 +8,12 @@
 
 ## 1. Overview
 
-**DASO (Deterministic Automatic Scoped Ownership)** is Razen’s native memory management model.
+**DASO (Deterministic Automatic Scoped Ownership)** is Razen's native memory management model.
 
 It is designed to achieve:
 
 * **Performance near C/C++**
-* **Deterministic memory behavior (no GC pauses)**
+* **Deterministic memory behavior — no GC pauses**
 * **Memory safety by default**
 * **Minimal syntax and low cognitive load**
 * **Less verbosity than Rust**
@@ -57,24 +57,22 @@ Every `act` in Razen implicitly creates a **memory region**.
 * Deallocation is **O(1)**
 
 ```razen
-act compute() {
-    a := Vec
-    b := Map[str, int]()
-    c := User { id 1, name "Razen" }
+act compute() void {
+    a: vec[int]      := vec[1, 2, 3]
+    b: map[str, int] := map["x": 10, "y": 20]
+    c := User { id: 1, name: "Razen" }
 }
-// entire region freed here
+// entire region freed here — one pointer reset
 ```
 
 ### 3.2 Why Regions Matter
 
-| Model          | Deallocation Cost        |
-| -------------- | ------------------------ |
-| C              | Manual, error-prone      |
-| Rust           | Drop per value (O(n))    |
-| GC             | Deferred, unpredictable  |
-| **Razen (DASO)** | One pointer reset (O(1)) |
-
-This is the foundation of Razen’s performance.
+| Model              | Deallocation Cost        |
+|--------------------|--------------------------|
+| C                  | Manual, error-prone      |
+| Rust               | Drop per value (O(n))    |
+| GC                 | Deferred, unpredictable  |
+| **Razen (DASO)**   | One pointer reset (O(1)) |
 
 ---
 
@@ -84,206 +82,360 @@ If a value **escapes its defining scope**, the compiler automatically promotes i
 
 ```razen
 act make_user() User {
-    u := User { id 1, name "A" }
-    retn u
+    u := User { id: 1, name: "Alice" }
+    ret u    // u escapes — compiler promotes to heap automatically
 }
 ```
 
 **Compiler behavior:**
 
 * Detects `u` escapes the region
-* Moves it to heap storage
+* Moves it to heap-backed storage
 * Assigns ownership
 
-**No annotations. No keywords. No developer action.**
+**No annotations. No keywords. No developer action required.**
 
 ---
 
 ## 5. Ownership Model (Lite, Implicit, Inferred)
 
-Razen uses **ownership semantics**, but avoids Rust’s verbosity.
-
 ### 5.1 Ownership Rules
 
 * Single owner by default
-* Moves are implicit
-* Borrows are inferred
-* No lifetime syntax exists in the language
+* Moves are implicit on assignment
+* Borrows are inferred at call sites
+* No lifetime syntax in the language
 
 ```razen
-u := User()
-v := u       // move
-// u is now invalid
+u := User { id: 1, name: "Alice" }
+v := u       // move — u is now invalid
 ```
 
 ```razen
-act print(user User) {
-    std.io.print(user.name)
+act print_user(user: User) void {
+    println(user.name)
 }
 
-u := User()
-print(u)     // inferred borrow
+u := User { id: 1, name: "Alice" }
+print_user(u)    // compiler infers borrow — u still valid here
 ```
-
-The compiler ensures safety without exposing complexity.
 
 ---
 
 ## 6. Shared Memory (Explicit and Controlled)
 
-Shared ownership is **opt-in** using `shared`.
+Shared ownership is **opt-in** using the `shared` keyword.
 
 ```razen
-shared cache := Map[str, Data]()
+shared cache: map[str, str] = map[]
+cache.insert("key", "value")
 ```
 
 ### Properties
 
-* Uses reference counting
+* Uses Automatic Reference Counting (ARC)
 * Non-atomic by default
-* Atomic when crossing `async` / `fork`
-* Compiler warns on excessive sharing
+* **Automatically atomic when crossing `async` / `fork` boundaries** — compiler handles this
+* Compiler warns on excessive sharing patterns
 
 ```razen
-shared node := Node()
-a := node
-b := node
+shared node := Node { id: 1, data: "shared" }
+a := node    // ref count: 2
+b := node    // ref count: 3
+// freed when a, b, node all go out of scope
 ```
 
-This avoids Rust’s `Rc<RefCell<T>>` patterns and runtime borrow failures.
+**Shared in data structures:**
+
+```razen
+struct ListNode[T] {
+    value: T,
+    next:  option[shared ListNode[T]],
+}
+
+node_c := shared ListNode[int] { value: 3, next: none }
+node_b := shared ListNode[int] { value: 2, next: some(node_c) }
+node_a := shared ListNode[int] { value: 1, next: some(node_b) }
+```
 
 ---
 
-## 7. Deterministic Resource Cleanup with `defer`
+## 7. Deterministic Resource Cleanup — `defer`
 
-`defer` schedules code to run when a scope exits.
+`defer` schedules code to run at scope exit, in reverse declaration order.
 
 ```razen
-act read() {
-    f := File.open("a.txt")
-    defer f.close()
-    data := f.read()
+act read_file(path: str) result[str, str] {
+    f := File.open(path)?
+    defer f.close()           // runs when scope exits — always
+    data := f.read()?
+    ok(data)
+}
+
+act with_lock(key: str) void {
+    lock := mutex.acquire(key)
+    defer lock.release()      // even on early ret
+    // critical section
 }
 ```
 
-* Used for OS resources, locks, files, GPU buffers
-* Memory itself does not require `defer`
+Memory itself does **not** require `defer` — DASO regions handle that automatically.
 
 ---
 
-## 8. Unsafe Manual Memory (Explicit Escape Hatch)
+## 8. Concurrency and DASO — `async` and `fork`
 
-For low-level systems code:
+### 8.1 `async` / `await`
+
+Async functions run cooperatively on a shared executor.
+Values inside an `async act` follow the same region rules, with one addition:
+values that cross `.await` points must either be owned or `shared`.
+
+```razen
+async act fetch(url: str) result[str, str] {
+    res := http.get(url).await?
+    ok(res.body)
+}
+
+async act load_user(id: int) result[User, str] {
+    data := fetch("https://api.razen.dev/users/{id}").await?
+    user := parse_json[User](data)?
+    ok(user)
+}
+```
+
+### 8.2 `fork` — Structured Concurrency
+
+`fork` spawns multiple tasks that run concurrently and **waits for all of them**
+before the enclosing scope can proceed. This is structured concurrency — no task
+outlives the `fork` block.
+
+**DASO interactions with `fork`:**
+* Values passed into a `fork` task must be owned (moved in) or `shared`
+* `shared` values crossing a `fork` boundary automatically upgrade to atomic ARC
+* When the `fork` block exits, all task regions are freed deterministically
+
+```razen
+// Fork two tasks — results available after block
+(user_res, posts_res) := fork {
+    load_user(1).await,
+    load_posts(1).await,
+}
+
+// Named results
+fork {
+    user_data   <- load_user(1).await,
+    post_data   <- load_posts(1).await,
+    cfg_data    <- load_config().await,
+}
+// user_data, post_data, cfg_data are bound and in scope here
+
+// Fork N tasks over a collection
+results := fork loop id in user_ids {
+    load_user(id).await
+}
+// results: vec[result[User, str]]
+
+// Shared state across forked tasks — atomic ARC kicks in automatically
+shared counter: map[str, int] = map[]
+fork {
+    increment_counter(counter).await,
+    read_counter(counter).await,
+}
+
+// Passing owned values into tasks — moved, not shared
+data := fetch_raw_data()
+processed := fork {
+    heavy_transform(data).await    // data is moved into this task
+}
+```
+
+**Why `fork` is safe under DASO:**
+
+| Concern            | How DASO handles it                              |
+|--------------------|--------------------------------------------------|
+| Data races         | Non-shared values can't cross fork; shared = atomic ARC |
+| Memory leaks       | Fork block owns all task regions; freed at exit  |
+| Dangling references| Escape analysis prevents references from living past fork |
+| Unpredictable lifetime | All tasks complete before fork exits — deterministic |
+
+---
+
+## 9. Unsafe Manual Memory
 
 ```razen
 unsafe {
-    buf := alloc(1024)
-    use(buf)
+    buf  := alloc(1024)
+    ptr  := &buf
+    data := *ptr
     free(buf)
 }
 ```
 
-* Zero runtime overhead
-* No safety checks
-* Fully isolated from safe code
+* Zero runtime overhead inside `unsafe`
+* No DASO region applies — fully manual
+* Isolated from safe code — undefined behavior cannot leak out
 
 ---
 
-## 9. Comparison with Other Languages
+## 10. Comparison with Other Languages
 
-### 9.1 Razen vs C/C++
+### 10.1 Razen vs C/C++
 
-| Aspect        | C/C++     | Razen                    |
-| ------------- | --------- | ---------------------- |
-| Memory safety | Manual    | Compiler-enforced      |
-| Leaks         | Common    | Impossible (safe code) |
-| Performance   | Excellent | Excellent              |
-| Determinism   | Yes       | Yes                    |
+| Aspect        | C/C++              | Razen                    |
+|---------------|--------------------|--------------------------|
+| Memory safety | Manual             | Compiler-enforced        |
+| Leaks         | Common             | Impossible (safe code)   |
+| Performance   | Excellent          | Excellent                |
+| Determinism   | Yes                | Yes                      |
 
----
+### 10.2 Razen vs Rust
 
-### 9.2 Razen vs Rust
+| Aspect         | Rust                    | Razen                     |
+|----------------|-------------------------|---------------------------|
+| Lifetimes      | Explicit                | None (compiler-internal)  |
+| Borrow checker | User-visible            | Hidden                    |
+| Verbosity      | High                    | Low                       |
+| Safety         | Excellent               | Excellent                 |
+| Region frees   | O(n) drop chain         | O(1) pointer reset        |
+| Shared state   | `Rc<RefCell<T>>`        | `shared` keyword          |
 
-| Aspect         | Rust         | Razen               |
-| -------------- | ------------ | ----------------- |
-| Lifetimes      | Explicit     | None              |
-| Borrow checker | User-visible | Compiler-internal |
-| Verbosity      | High         | Low               |
-| Safety         | Excellent    | Excellent         |
+### 10.3 Razen vs GC Languages
 
-Razen keeps Rust’s guarantees while removing its friction.
-
----
-
-### 9.3 Razen vs GC Languages (Java, Python, Go)
-
-| Aspect          | GC Languages | Razen       |
-| --------------- | ------------ | --------- |
-| GC pauses       | Yes          | Never     |
-| Memory overhead | High         | Low       |
-| Predictability  | Medium       | Exact     |
-| Runtime cost    | Continuous   | Near-zero |
+| Aspect          | GC Languages   | Razen        |
+|-----------------|----------------|--------------|
+| GC pauses       | Yes            | Never        |
+| Memory overhead | High           | Low          |
+| Predictability  | Medium         | Exact        |
+| Runtime cost    | Continuous     | Near-zero    |
 
 ---
 
-## 10. Performance Characteristics
+## 11. Performance Characteristics
 
-* Region allocation: pointer bump (stack-like)
-* Region deallocation: O(1)
+* Region allocation: bump-pointer (stack-like speed)
+* Region deallocation: O(1) — one pointer reset
 * Ownership moves: zero cost
-* Shared memory: localized ARC only
-* No background threads
-* No global runtime GC
-
-This makes Razen suitable for:
-
-* Game engines
-* Compilers
-* Databases
-* Operating systems
-* High-performance servers
+* Shared memory: localized ARC only where `shared` is used
+* Fork: all task regions freed at fork exit — deterministic
+* No background GC threads
+* No global runtime
 
 ---
 
-## 11. Developer Mental Model
+## 12. Developer Mental Model
 
-> “If it doesn’t escape, I don’t think about memory.”
-> “If it escapes, Razen handles it.”
-> “If I share, I say `shared`.”
-> “If I need raw power, I use `unsafe`.”
+> "If it doesn't escape, I don't think about memory."
+> "If it escapes, Razen handles it automatically."
+> "If I need shared ownership, I write `shared`."
+> "If I fork, shared values become atomic automatically."
+> "If I need raw control, I write `unsafe`."
 
-This simplicity is intentional and enforced.
+**Decision tree:**
+
+```
+Do I need to share a value across multiple owners?
+├── No  → just use it — DASO handles cleanup
+└── Yes → add `shared` — ARC kicks in
+
+Does the value outlive its defining function?
+├── No  → region allocation — O(1) cleanup at scope exit
+└── Yes → compiler promotes automatically — no syntax needed
+
+Does the value cross a fork or async boundary?
+├── No  → non-atomic ARC (cheap)
+└── Yes → compiler upgrades to atomic ARC automatically
+
+Do I need OS resources (files, locks, sockets)?
+└── Yes → use `defer` for cleanup
+
+Do I need raw pointer access or manual allocation?
+└── Yes → wrap in `unsafe { }`
+```
 
 ---
 
-## 12. Why DASO Is Optimal
+## 13. Full Example — DASO and fork Together
 
-DASO represents the **best-known achievable balance** between:
+```razen
+struct Config {
+    host: str,
+    port: int,
+}
 
-* Safety
-* Performance
-* Simplicity
-* Determinism
+struct UserService {
+    config: shared Config,
+    cache:  shared map[int, User],
+}
 
-Anything beyond this would require:
+impl UserService {
+    act new(cfg: Config) UserService {
+        UserService {
+            config: shared cfg,
+            cache:  shared map[],
+        }
+    }
 
-* Hardware-level support, or
-* Giving up determinism or safety
+    async act load_users(self, ids: vec[int]) result[vec[User], str] {
+        // Fetch all users concurrently — fork spawns one task per id
+        results := fork loop id in ids {
+            self.load_one(id).await
+        }
+
+        // Collect results — stop on first error
+        mut users: vec[User] = vec[]
+        loop r in results {
+            match r {
+                ok(user)  -> users.push(user),
+                err(msg)  -> ret err("Failed loading users: {msg}"),
+            }
+        }
+        ok(users)
+    }
+
+    async act load_one(self, id: int) result[User, str] {
+        // Check cache first — shared, atomic across fork
+        if let some(user) = self.cache.get(id) {
+            ret ok(user)
+        }
+
+        url  := "{self.config.host}:{self.config.port}/users/{id}"
+        data := http.get(url).await?
+        user := parse_json[User](data)?
+
+        self.cache.insert(id, user)    // atomic write — safe across fork
+        ok(user)
+    }
+}
+
+async act main() void {
+    cfg     := Config { host: "https://api.razen.dev", port: 443 }
+    service := UserService.new(cfg)
+
+    match service.load_users(vec[1, 2, 3, 4, 5]).await {
+        ok(users) -> {
+            loop user in users {
+                println("{user.id}: {user.name}")
+            }
+        },
+        err(msg) -> println("Error: {msg}"),
+    }
+}
+// All regions freed deterministically when main exits
+```
 
 ---
 
-## 13. Summary
+## 14. Summary
 
 **DASO makes Razen:**
 
-* Faster than GC-based languages
-* Safer than C/C++
-* Less verbose than Rust
-* Predictable and deterministic
-* Scalable from scripts to systems
-
-DASO is not experimental.
-It is a **carefully integrated synthesis** of proven techniques.
+* **Faster than GC languages** — no pauses, O(1) region deallocation
+* **Safer than C/C++** — compiler-enforced, no use-after-free, no leaks
+* **Less verbose than Rust** — no lifetimes, no borrow syntax
+* **Concurrency-safe** — `fork` + automatic atomic ARC
+* **Predictable** — memory freed at exact known points
+* **Scalable** — from scripts to operating system kernels
 
 ---
 
