@@ -456,43 +456,251 @@ first_even: option[int] := loop i in 0..items.len() {
     none    // the else runs if loop completes without break
 }
 
-// Retry with backoff
-response := loop attempt in 0..3 {
-    match try_connect() {
-        ok(r)    -> break r,
-        err(msg) -> {
-            if attempt == 2 { break_err(msg) }   // propagate as error
-            wait(attempt * 100)
-        },
+// Retry with backoff — use ret err() to propagate from loop
+act connect_with_retry() result[Connection, str] {
+    loop attempt in 0..3 {
+        match try_connect() {
+            ok(conn) -> { ret ok(conn) },
+            err(msg) -> {
+                if attempt == 2 { ret err(msg) }    // give up on last attempt
+                wait(attempt * 100)
+            },
+        }
     }
+    err("unreachable")
 }
 ```
 
 ---
 
-## 13. Pattern Matching Summary
+## 13. Or-Patterns — `|`
 
-| Pattern                    | Syntax                            | Where            |
-|----------------------------|-----------------------------------|------------------|
-| Literal                    | `42`, `"hello"`, `true`, `'a'`   | match, if let    |
-| Wildcard                   | `_`                               | everywhere       |
-| Binding                    | `name`                            | match, let       |
-| Tuple                      | `(a, b, c)`                       | match, let, loop |
-| Struct                     | `{ field, other_field, _ }`       | match, let       |
-| Struct rename              | `{ field: new_name, _ }`          | match, let       |
-| Enum unit                  | `Status.Active`                   | match            |
-| Enum positional            | `Shape.Circle(r)`                 | match            |
-| Enum named                 | `Event.Click { x, y }`            | match            |
-| Option `some`              | `some(val)`                       | match, if let    |
-| Option `none`              | `none`                            | match            |
-| Result `ok`                | `ok(val)`                         | match, if let    |
-| Result `err`               | `err(e)`                          | match, if let    |
-| Range                      | `'a'..='z'`, `0..=9`             | match            |
-| With guard                 | `pattern if condition`            | match            |
+Match multiple patterns in a single arm with `|`.
+All branches of an or-pattern must bind the same names with the same types.
+
+```razen
+// Matching multiple literal values
+match exit_code {
+    0            -> println("success"),
+    1 | 2        -> println("general error"),
+    126 | 127    -> println("command error"),
+    _            -> println("unknown: {exit_code}"),
+}
+
+// char or-patterns
+match c {
+    'a' | 'e' | 'i' | 'o' | 'u' -> "vowel",
+    'a'..='z'                     -> "consonant",
+    'A'..='Z'                     -> "uppercase",
+    '0'..='9'                     -> "digit",
+    _                             -> "other",
+}
+
+// str or-patterns
+match command {
+    "help" | "h" | "--help" | "-h" -> show_help(),
+    "quit" | "exit" | "q"          -> std.process.exit(0),
+    "version" | "-v" | "--version" -> show_version(),
+    _                               -> run_command(command),
+}
+
+// enum or-patterns
+match event {
+    Event.KeyPress { key: 'q', _ } | Event.Quit -> shutdown(),
+    Event.Click { x, y } | Event.Resize { x, y } -> handle_pos(x, y),
+    // ↑ both bind x and y of the same type — valid or-pattern
+    _                                             -> {},
+}
+
+// Or-patterns in if let
+if let ok(200) | ok(201) | ok(204) = response.status {
+    println("success")
+}
+
+// Or-patterns with guard
+match n {
+    x if x == 0 || x == 1 -> "tiny",      // guard — OR in condition
+    2 | 3 | 5 | 7 | 11    -> "small prime",  // or-pattern
+    n if n < 100           -> "small",
+    _                      -> "large",
+}
+```
+
+---
+
+## 14. Literal Patterns
+
+Match against specific literal values of `int`, `uint`, `float`, `str`, `char`, `bool`.
+
+```razen
+// int literals
+match exit_code {
+    0   -> "success",
+    1   -> "general error",
+    2   -> "misuse of shell",
+    127 -> "command not found",
+    _   -> "unknown code {exit_code}",
+}
+
+// str literals
+match day {
+    "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" -> "weekday",
+    "Saturday" | "Sunday"                                         -> "weekend",
+    _                                                             -> "invalid day",
+}
+
+// char literals
+match grade_char {
+    'A' -> 4.0,
+    'B' -> 3.0,
+    'C' -> 2.0,
+    'D' -> 1.0,
+    'F' -> 0.0,
+    _   -> panic("invalid grade {grade_char}"),
+}
+
+// bool literals
+match is_admin {
+    true  -> show_admin_panel(),
+    false -> show_user_panel(),
+}
+
+// float literals — use with caution (floating-point equality is tricky)
+// Prefer ranges or guards for float matching
+match ratio {
+    0.0 -> "zero",
+    1.0 -> "full",
+    _   -> "partial",
+}
+
+// Literal range patterns
+match score {
+    0..=59   -> "F",
+    60..=69  -> "D",
+    70..=79  -> "C",
+    80..=89  -> "B",
+    90..=100 -> "A",
+    _        -> "invalid",
+}
+
+// Literal patterns in if let
+if let 0 = items.len() {
+    println("empty")
+}
+
+if let true = user.is_active {
+    process(user)
+}
+```
+
+---
+
+## 15. Shadowing
+
+A binding can be **shadowed** — declared again with the same name in the same or
+an inner scope. The new binding replaces the old one from that point forward.
+The old value is not mutated; a new binding is created.
+
+**Shadowing is different from mutation:** `mut` changes a value in place.
+Shadowing creates a new binding that can even have a different type.
+
+```razen
+// Basic shadowing — same name, new value
+x := 5
+x := x + 1        // x is now 6 — shadows the previous x
+x := x * 2        // x is now 12
+
+// Shadowing with type change — a key advantage over mut
+raw := "  hello world  "    // str
+raw := raw.trim()            // still str, but processed
+raw := raw.to_upper_case()   // "HELLO WORLD"
+
+// int → float shadowing
+n := 42            // int
+n := n as float    // now float — same name, different type
+
+// Common pattern: validate-then-unwrap
+maybe_user := find_user(id)                 // option[User]
+maybe_user := maybe_user.unwrap_or(default) // User — shadows option
+
+// Shadowing after parsing
+age_str := "25"              // str
+age     := age_str.parse_int().unwrap()   // int — different name here (normal)
+
+raw_score := input.trim()         // str
+raw_score := raw_score.parse_float()  // result[float, str]
+raw_score := raw_score.unwrap_or(0.0) // float — three shadows of same name
+
+// Shadowing in inner scope — outer binding preserved
+x := 10
+{
+    x := x * 2    // inner x = 20, does NOT affect outer x
+    println(x)    // 20
+}
+println(x)        // 10 — outer x unchanged
+
+// if let shadowing — very common pattern
+user := find_user(id)    // option[User]
+if let some(user) = user {
+    // 'user' here is the unwrapped User, not the option
+    println(user.name)
+}
+// 'user' here is still option[User]
+
+// match binding shadows outer
+result := parse("42")    // result[int, str]
+match result {
+    ok(result)  -> println("got {result}"),    // 'result' is int here
+    err(result) -> println("err: {result}"),   // 'result' is str here
+}
+
+// loop variable shadows outer
+i := 99
+loop i in 0..5 {
+    // loop's i shadows outer i
+    println(i)    // 0, 1, 2, 3, 4
+}
+println(i)    // 99 — outer i unchanged
+
+// Shadowing rules summary:
+// ✓ Same scope: shadow is allowed — creates new binding
+// ✓ Inner scope: inner shadow doesn't affect outer
+// ✓ Can change type: new binding is completely independent
+// ✗ Cannot shadow a mut binding in its own scope with a different type
+//   without explicit re-declaration
+```
+
+---
+
+## 16. Pattern Matching Summary
+
+| Pattern                    | Syntax                              | Where             |
+|----------------------------|-------------------------------------|-------------------|
+| Wildcard                   | `_`                                 | everywhere        |
+| Literal int                | `42`, `-5`, `0xFF`                  | match, if let     |
+| Literal float              | `0.0`, `1.0`                        | match, if let     |
+| Literal str                | `"hello"`, `"ok"`                   | match, if let     |
+| Literal char               | `'a'`, `'\n'`, `'😀'`              | match, if let     |
+| Literal bool               | `true`, `false`                     | match, if let     |
+| Binding                    | `name`                              | match, let        |
+| Tuple                      | `(a, b, c)`                         | match, let, loop  |
+| Struct                     | `{ field, other, _ }`               | match, let        |
+| Struct rename              | `{ field: alias, _ }`               | match, let        |
+| Enum unit                  | `Status.Active`                     | match             |
+| Enum positional            | `Shape.Circle(r)`                   | match             |
+| Enum named                 | `Event.Click { x, y }`              | match             |
+| Option `some`              | `some(val)`                         | match, if let     |
+| Option `none`              | `none`                              | match             |
+| Result `ok`                | `ok(val)`                           | match, if let     |
+| Result `err`               | `err(e)`                            | match, if let     |
+| Inclusive range            | `'a'..='z'`, `0..=9`               | match             |
+| Or-pattern                 | `A \| B \| C`                       | match, if let     |
+| With guard                 | `pattern if condition`              | match             |
+| Tuple struct               | `UserId(n)`, `PixelPos(x, y)`       | match, let        |
 
 ---
 
 **See also:**
 - `keywords.md` — `match`, `if let`, `loop let`, `loop`
-- `types.md` — enums, structs, option, result
-- `symbols.md` — `_`, `..`, `'label:`
+- `types.md` — enums, structs, option, result, tuple structs
+- `symbols.md` — `_`, `..`, `'label:`, `|`

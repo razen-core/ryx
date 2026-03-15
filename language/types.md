@@ -676,27 +676,446 @@ raw_regex := r"\d+\.\d+"
 
 ---
 
+## 12. Platform-Sized Integers — `isize` and `usize`
+
+`isize` and `usize` are **pointer-sized** integers. Their width matches the target
+platform: 32-bit on 32-bit systems, 64-bit on 64-bit systems.
+
+Use them for array indices, pointer arithmetic, memory sizes, and any interop
+with C's `ssize_t` and `size_t`.
+
+```razen
+// usize — unsigned pointer-sized integer
+arr_len:   usize := arr.len()        // len() always returns usize
+byte_count: usize := std.mem.size_of[User]()
+
+// Index with usize
+idx: usize := 3u
+val := arr[idx]
+
+// isize — signed pointer-sized integer (pointer arithmetic, offsets)
+offset: isize := -4i
+ptr_diff := (ptr_b as isize) - (ptr_a as isize)
+
+// usize in loop
+loop i in 0u..arr.len() {
+    println(arr[i])
+}
+
+// int ↔ usize conversion
+n:   int   := 42
+u:   usize := n as usize
+back: int  := u as int
+
+// Why not just use int/uint?
+// int  (i64) and usize may differ on 32-bit platforms
+// usize is guaranteed to hold any valid index on the target machine
+// Required for FFI with size_t / ssize_t
+```
+
+| Type    | Width   | Signed? | Use when                               |
+|---------|---------|---------|----------------------------------------|
+| `usize` | pointer | No      | Array indices, memory sizes, C size_t  |
+| `isize` | pointer | Yes     | Pointer offsets, differences, C ssize_t |
+
+---
+
+## 13. Tensor Type System
+
+`tensor` is a first-class built-in type designed for AI/ML workloads.
+Tensors carry their **element dtype** as a type parameter.
+
+```razen
+// Typed tensor declarations
+weights:  tensor[f32]   := tensor[f32][0.1, 0.4, 0.2, 0.3]
+labels:   tensor[int]   := tensor[int][0, 1, 0, 1, 1]
+image:    tensor[u8]    := tensor[u8][255, 128, 0, 64]
+logits:   tensor[f64]   := tensor[f64][1.2, -0.5, 3.1]
+
+// Default inferred dtype — float (f64) for floating literals
+input     := tensor[1.0, 2.0, 3.0]       // inferred: tensor[float]
+counts    := tensor[1, 2, 3, 4]           // inferred: tensor[int]
+
+// 2D tensors — dtype carried on outer tensor
+matrix:   tensor[f32]   := tensor[f32][
+    [0.1, 0.2, 0.3],
+    [0.4, 0.5, 0.6],
+]
+
+// 3D tensor
+cube:     tensor[f32]   := tensor[f32][
+    [[1.0, 2.0], [3.0, 4.0]],
+    [[5.0, 6.0], [7.0, 8.0]],
+]
+
+// Mutable
+mut w: tensor[f32] = tensor[f32][0.1, 0.2, 0.3, 0.4]
+w = w * 0.5f32
+
+// dtype query
+d := weights.dtype()    // "f32"
+shape := matrix.shape() // (2, 3)
+size  := matrix.size()  // 6
+
+// Convert dtype
+f64_w := weights.to_dtype[f64]()    // tensor[f32] → tensor[f64]
+f32_w := logits.to_dtype[f32]()     // tensor[f64] → tensor[f32]
+
+// GPU / CPU transfer
+gpu_w := weights.to_gpu()           // tensor[f32] — on GPU memory
+cpu_w := gpu_w.to_cpu()             // tensor[f32] — back on CPU
+
+// Supported dtypes for tensor[T]
+// T must be one of: f32, f64, i8, i16, i32, i64, u8, u16, u32, u64, int, float
+// Most ML operations require f32 or f64
+```
+
+**Tensor operations by dtype:**
+
+```razen
+a: tensor[f32] := tensor[f32][1.0, 2.0, 3.0]
+b: tensor[f32] := tensor[f32][4.0, 5.0, 6.0]
+
+// Element-wise — dtypes must match
+c := a + b         // tensor[f32][5.0, 7.0, 9.0]
+d := a * b         // tensor[f32][4.0, 10.0, 18.0]
+e := a / b         // tensor[f32][0.25, 0.4, 0.5]
+
+// Reductions
+dot_p   := a.dot(b)             // f32: 32.0
+total   := a.sum()              // f32: 6.0
+mean    := a.mean()             // f32: 2.0
+maximum := a.max()              // f32: 3.0
+minimum := a.min()              // f32: 1.0
+
+// Scalar ops — scalar must match dtype
+scaled  := a * 2.0f32          // tensor[f32]
+shifted := a + 1.0f32          // tensor[f32]
+
+// Activation functions (on tensor[f32] or tensor[f64])
+relu    := a.relu()
+sigmoid := a.sigmoid()
+softmax := a.softmax()
+tanh    := a.tanh()
+
+// Gradient computation
+a.requires_grad()               // enable gradient tracking
+loss := compute_loss(a)
+loss.backward()                 // compute gradients
+grad := a.grad()                // tensor[f32] — the gradient
+```
+
+---
+
+## 14. `const act` — Compile-Time Functions
+
+`const act` declares a function that the compiler **evaluates at compile time**
+when called in a constant context. The result is inlined as a literal.
+
+```razen
+// Simple compile-time function
+const act max_of(a: int, b: int) int -> if a > b { a } else { b }
+const act min_of(a: int, b: int) int -> if a < b { a } else { b }
+const act array_len[T, N](_: [T; N]) int -> N
+
+// Use in const declarations — evaluated at compile time
+const BUFFER_SIZE: int  = max_of(1024, 2048)   // 2048
+const MIN_PORT:    int  = min_of(8080, 9090)    // 8080
+
+// Evaluate array size from an actual array
+my_array := [1, 2, 3, 4, 5]
+const LEN: int = array_len(my_array)             // 5
+
+// More complex compile-time computation
+const act fibonacci(n: int) int {
+    if n <= 1 { ret n }
+    fibonacci(n - 1) + fibonacci(n - 2)
+}
+
+const FIB_10: int = fibonacci(10)    // 55 — computed at compile time
+
+// Compile-time string operations
+const act make_header(title: str) str {
+    "═══ {title} ═══"
+}
+
+const APP_HEADER: str = make_header("Razen v1.0")
+
+// Compile-time size calculations
+const act padding_for(size: int, alignment: int) int {
+    rem := size % alignment
+    if rem == 0 { 0 } else { alignment - rem }
+}
+
+const STRUCT_PADDING: int = padding_for(13, 8)    // 3
+
+// Rules:
+// - const act body may only use: arithmetic, comparisons, const bindings,
+//   other const act calls, and literals
+// - No I/O, no heap allocation, no loops that depend on runtime values
+// - Recursion is allowed (with a compile-time depth limit)
+// - Works with generic type parameters that have compile-time-known sizes
+```
+
+---
+
+## 15. Tuple Structs (Newtype Pattern)
+
+A **tuple struct** wraps one or more types as positional fields.
+The constructor is the struct name itself. Fields are accessed with `.0`, `.1`, etc.
+
+```razen
+// Single-field newtype — adds type safety over the underlying type
+struct UserId(int)
+struct Email(str)
+struct Meters(float)
+struct Millis(int)
+struct PixelPos(int, int)    // two-field tuple struct
+
+// Construction — use struct name as a function
+uid     := UserId(42)
+email   := Email("alice@razen.dev")
+dist    := Meters(100.0)
+delay   := Millis(500)
+pos     := PixelPos(1280, 720)
+
+// Access positional fields
+raw_id  := uid.0        // 42
+addr    := email.0      // "alice@razen.dev"
+x_pos   := pos.0        // 1280
+y_pos   := pos.1        // 720
+
+// Destructure in let
+PixelPos(x, y) := pos
+UserId(id)     := uid
+
+// In match
+match maybe_id {
+    some(UserId(n)) if n > 0 -> println("valid id: {n}"),
+    some(UserId(_))           -> println("invalid id"),
+    none                      -> println("no id"),
+}
+
+// Methods on tuple structs
+impl UserId {
+    act new(id: int) result[UserId, str] {
+        if id <= 0 { ret err("UserId must be positive") }
+        ok(UserId(id))
+    }
+
+    act value(self) int { self.0 }
+
+    act is_valid(self) bool { self.0 > 0 }
+}
+
+impl Email {
+    act new(addr: str) result[Email, str] {
+        if not addr.contains("@") { ret err("Invalid email: {addr}") }
+        ok(Email(addr.to_lower_case()))
+    }
+
+    act value(self) str { self.0 }
+
+    act domain(self) str {
+        parts := self.0.split("@")
+        parts[1]
+    }
+}
+
+impl Display for UserId {
+    act to_string(self) str { "UserId({self.0})" }
+}
+
+impl Display for Meters {
+    act to_string(self) str { "{self.0}m" }
+}
+
+// Type safety in practice
+act process_user(id: UserId) void { ... }
+
+// process_user(42)           ← COMPILE ERROR: expected UserId, got int
+// process_user(UserId(42))   ← OK
+
+act add_distances(a: Meters, b: Meters) Meters {
+    Meters(a.0 + b.0)
+}
+
+// add_distances(1.0, 2.0)               ← COMPILE ERROR
+// add_distances(Meters(1.0), 2.0)       ← COMPILE ERROR
+// add_distances(Meters(1.0), Meters(2.0)) ← OK: Meters(3.0)
+```
+
+---
+
+## 16. Error Trait and Custom Errors
+
+The `Error` trait is the standard interface for all error types in Razen.
+It enables error chaining, conversion via `From`, and the `?` operator across error types.
+
+```razen
+// The Error trait (in prelude)
+trait Error: Display {
+    act message(self) str
+    act source(self) option[shared Error] {
+        none    // default: no chained cause
+    }
+}
+```
+
+### Custom Error Types
+
+```razen
+@derive[Debug, Clone, Eq]
+enum AppError {
+    Io       { msg: str },
+    Parse    { line: int, col: int, msg: str },
+    Network  { code: int, reason: str },
+    Auth     { reason: str },
+    NotFound { resource: str, id: int },
+}
+
+impl Display for AppError {
+    act to_string(self) str {
+        self.message()
+    }
+}
+
+impl Error for AppError {
+    act message(self) str {
+        match self {
+            AppError.Io { msg }                 -> "IO error: {msg}",
+            AppError.Parse { line, col, msg }   -> "Parse error at {line}:{col}: {msg}",
+            AppError.Network { code, reason }   -> "Network {code}: {reason}",
+            AppError.Auth { reason }             -> "Auth failed: {reason}",
+            AppError.NotFound { resource, id }  -> "{resource} with id {id} not found",
+        }
+    }
+}
+```
+
+---
+
+## 17. `From` and `Into` — Type Conversion Traits
+
+`From` and `Into` are the standard traits for infallible type conversion.
+The `?` operator uses `From` to automatically convert between compatible error types.
+
+```razen
+trait From[T] {
+    act from(value: T) Self
+}
+
+trait Into[T] {
+    // Default: if From[U] for T is implemented, Into[T] for U comes for free
+    act into(self) T
+}
+```
+
+### Using `From` for error conversion
+
+```razen
+// Define a wrapper error type
+@derive[Debug]
+enum ServiceError {
+    Io(AppError),
+    Logic { msg: str },
+}
+
+impl Display for ServiceError {
+    act to_string(self) str {
+        match self {
+            ServiceError.Io(e)      -> "Service IO error: {e.message()}",
+            ServiceError.Logic { msg } -> "Logic error: {msg}",
+        }
+    }
+}
+
+impl Error for ServiceError { ... }
+
+// Implement From so ? can convert AppError → ServiceError
+impl From[AppError] for ServiceError {
+    act from(e: AppError) ServiceError {
+        ServiceError.Io(e)
+    }
+}
+
+// Now ? converts automatically
+act run_service(path: str) result[str, ServiceError] {
+    // fs.read returns result[str, AppError]
+    // ? converts AppError → ServiceError via From[AppError]
+    data := std.fs.read(path)?
+
+    if data.is_empty() {
+        ret err(ServiceError.Logic { msg: "empty file" })
+    }
+    ok(data)
+}
+```
+
+### Numeric conversions with `From`
+
+```razen
+// Built-in From implementations
+wide: i64 := i64.from(100i32)    // i32 → i64 (widening, always safe)
+wide: f64 := f64.from(0.5f32)    // f32 → f64 (widening)
+
+// Using .into() — requires type annotation to resolve the target
+wide: i64 := (100i32).into()
+```
+
+### Custom `From` / `Into`
+
+```razen
+struct Celsius(float)
+struct Fahrenheit(float)
+
+impl From[Celsius] for Fahrenheit {
+    act from(c: Celsius) Fahrenheit {
+        Fahrenheit(c.0 * 9.0 / 5.0 + 32.0)
+    }
+}
+
+impl From[Fahrenheit] for Celsius {
+    act from(f: Fahrenheit) Celsius {
+        Celsius((f.0 - 32.0) * 5.0 / 9.0)
+    }
+}
+
+body_temp   := Celsius(37.0)
+in_f        := Fahrenheit.from(body_temp)    // Fahrenheit(98.6)
+back_to_c   := Celsius.from(in_f)            // Celsius(37.0)
+
+// Using .into()
+in_f2: Fahrenheit := body_temp.into()
+```
+
+---
+
 ## Summary
 
-| Type     | Default? | Width  | Use when                            |
-|----------|----------|--------|-------------------------------------|
-| `int`    | ✓        | 64-bit | General-purpose signed integer      |
-| `uint`   | ✓        | 64-bit | General-purpose unsigned integer    |
-| `float`  | ✓        | 64-bit | General-purpose floating-point      |
-| `i8`     | —        | 8-bit  | Tiny signed values, C interop       |
-| `i16`    | —        | 16-bit | Small signed values                 |
-| `i32`    | —        | 32-bit | 32-bit signed, common in APIs       |
-| `i64`    | —        | 64-bit | Explicit alias for `int`            |
-| `u8`     | —        | 8-bit  | Bytes, pixel values, ASCII          |
-| `u16`    | —        | 16-bit | Ports, small counters               |
-| `u32`    | —        | 32-bit | File sizes, common in C APIs        |
-| `u64`    | —        | 64-bit | Explicit alias for `uint`           |
-| `f32`    | —        | 32-bit | GPU buffers, tensor weights, ML ops |
-| `f64`    | —        | 64-bit | Explicit alias for `float`          |
-| `char`   | —        | 32-bit | Single Unicode scalar value         |
-| `never`  | —        | —      | Functions that never return         |
+| Type     | Default? | Width   | Use when                               |
+|----------|----------|---------|----------------------------------------|
+| `int`    | ✓        | 64-bit  | General-purpose signed integer         |
+| `uint`   | ✓        | 64-bit  | General-purpose unsigned integer       |
+| `float`  | ✓        | 64-bit  | General-purpose floating-point         |
+| `i8`     | —        | 8-bit   | Tiny signed values, C interop          |
+| `i16`    | —        | 16-bit  | Small signed values                    |
+| `i32`    | —        | 32-bit  | 32-bit signed, common in APIs          |
+| `i64`    | —        | 64-bit  | Explicit alias for `int`               |
+| `u8`     | —        | 8-bit   | Bytes, pixel values, ASCII             |
+| `u16`    | —        | 16-bit  | Ports, small counters                  |
+| `u32`    | —        | 32-bit  | File sizes, common in C APIs           |
+| `u64`    | —        | 64-bit  | Explicit alias for `uint`              |
+| `isize`  | —        | pointer | Array indices, C ssize_t               |
+| `usize`  | —        | pointer | Memory sizes, C size_t                 |
+| `f32`    | —        | 32-bit  | GPU buffers, tensor weights, ML ops    |
+| `f64`    | —        | 64-bit  | Explicit alias for `float`             |
+| `char`   | —        | 32-bit  | Single Unicode scalar value            |
+| `never`  | —        | —       | Functions that never return            |
 
 **See also:**
 - `keywords.md` — language keywords
 - `patterns.md` — pattern matching and destructuring
 - `symbols.md` — operators and syntax
+- `prelude.md` — auto-imported types and functions
+- `std.md` — standard library reference
